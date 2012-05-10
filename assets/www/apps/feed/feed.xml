@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?>
+	<feeds>
+		<topic>
+			<title>Sport</title>
+			<source>
+				<name>Corriere del Ticino</name>
+				<link>http://www.cdt.ch/rss/sport.rss</link>
+				<icon>http://172.16.224.104:9000/assets/images/cdt.png</icon>
+			</source>
+			<source>
+				<name>Ticino Online</name>
+				<link>http://feeds.tio.ch/TicinoOnline-Sport</link>
+				<icon>http://172.16.224.104:9000/assets/images/tio.png</icon>
+			</source>
+			<source>
+				<name>Fox Sports</name>
+				<link>http://feeds.pheedo.com/feedout/syndicatedContent_categoryId_0</link>
+				<icon>http://172.16.224.104:9000/assets/images/cdt.png</icon>
+			</source>
+			<source>
+				<name>CNN</name>
+				<link>http://rss.cnn.com/rss/edition_sport.rss</link>
+				<icon>http://172.16.224.104:9000/assets/images/cnn.png</icon>
+			</source>
+			<source>
+				<name>ESPN</name>
+				<link>http://sports.espn.go.com/espn/rss/news</link>
+				<icon>http://172.16.224.104:9000/assets/images/cnn.png</icon>
+			</source>
+		</topic>
+		
+		<topic>
+			<title>Business</title>
+			<source>
+				<name>Corriere del Ticino</name>
+				<link>http://www.cdt.ch/rss/mondo.rss</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+			<source>
+				<name>Ticino Online</name>
+				<link>http://feeds.tio.ch/TicinoOnline-Trend</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+			<source>
+				<name>NY Times</name>
+				<link>http://www.nytimes.com/services/xml/rss/nyt/GlobalBusiness.xml</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+			<source>
+				<name>BBC</name>
+				<link>http://feeds.bbci.co.uk/news/business/rss.xml</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+		</topic>
+		
+		<topic>
+			<title>Humour</title>
+			<source>
+				<name>Corriere del Ticino</name>
+				<link>http://www.cdt.ch/rss/mondo.rss</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+			<source>
+				<name>Ticino Online</name>
+				<link>http://feeds.tio.ch/TicinoOnline-Trend</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+			<source>
+				<name>CNN</name>
+				<link>http://rss.cnn.com/rss/edition_business.rss</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+			<source>
+				<name>BBC</name>
+				<link>http://feeds.bbci.co.uk/news/business/rss.xml</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+		</topic>
+		
+		<topic>
+			<title>Entertainment</title>
+			<source>
+				<name>Corriere del Ticino</name>
+				<link>http://www.cdt.ch/rss/cinema.rss</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+			<source>
+				<name>Ticino Online</name>
+				<link>http://feeds.tio.ch/TicinoOnline-Cinema</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+			<source>
+				<name>CNN</name>
+				<link>http://rss.cnn.com/rss/edition_entertainment.rss</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+			<source>
+				<name>BBC</name>
+				<link>http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+		</topic>
+		
+		<topic>
+			<title>Tech</title>
+			<source>
+				<name>LegaNerd</name>
+				<link>http://feeds.feedburner.com/LegaNerd</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+			<source>
+				<name>Mac rumours</name>
+				<link>http://feeds.macrumors.com/MacRumors-All</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+			<source>
+				<name>Engadget</name>
+				<link>http://www.engadget.com/rss.xml</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+			<source>
+				<name>Boing Boing</name>
+				<link>http://rss.cnn.com/rss/edition_entertainment.rss</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+			<source>
+				<name>Ars Technica</name>
+				<link>http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml</link>
+				<icon>http://feeds.feedburner.com/LegaNerd</icon>
+			</source>
+		</topic>
+	</feeds>
+
+
+
+

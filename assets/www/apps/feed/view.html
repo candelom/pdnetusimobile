@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>Newsfeed</title>
+		<link rel="stylesheet" type="text/css" href="../../css/newsfeed.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/main.css" />
+		<script type="text/javascript" charset="utf-8" src="../../js/newsfeed.js" ></script>
+		<script type="text/javascript" src="../../js/jquery-1.7.1.min.js"></script>
+		 
+		<script type="text/javascript" charset="utf-8">
+		 var socket;
+		          
+		        $(function() {
+		           
+		        	//create local WebSocket
+					var app_server = "ws://172.16.224.104:9000/mobile/feed/socket";  
+			   	 	var app_socket = new WebSocket(app_server);		            
+		            
+			   		var sendStoredSources = function (){
+			    	
+			        	var jsonToSend = {}
+			        	//var sources = localStorage['newsfeed'];
+			        	
+			         	//jsonToSend.feeds = JSON.parse(sources); 
+						jsonToSend.preference=["http://feeds.tio.ch/Ticinonline-NewsTicino?format=xml","http://www.cdt.ch/rss/cdt.rss","http://www.engadget.com/rss.xml","http://feeds.bbci.co.uk/news/rss.xml"];
+						jsonToSend.username = "mattia";
+			        	jsonToSend.displayID = "1";
+			        	console.log(jsonToSend);
+			        	
+			        	//sending through web sockets to Feed App Controlletr
+			        	app_socket.send(JSON.stringify(jsonToSend));
+			    	}
+			    	
+			    	
+		            var receiveEvent = function(event) {
+		            	var data = JSON.parse(event.data)
+		                
+		                // Handle errors
+		                if(data.error) {
+		                    socket.close()
+		                    return
+		                } else {
+		                    $("#onChat").show()
+		                    $("#onError").hide()
+		                }
+		            }
+		            
+		          app_socket.onmessage = receiveEvent
+		          initFeedView();
+		          setSourceEntries();
+		          
+		          $("#send_bt").click(function() {
+		          		sendStoredSources();
+		          });
+		        
+		        });
+		        
+		    </script>
+		</head>
+	
+
+		<div id="Flip">
+			<div class="pagen">
+				
+				<!--  FEEDS SOURCES LIST VIEW -->
+				<div id="main_page" class="face front">
+					<div id="topic_title" class="titlebar">
+						<h1>News Feeds</h1>
+					</div>
+					<div id="list_topics">
+					</div>
+					<span id="send_bt" class="button white">Send sources</span>
+				</div><!--  END MAIN PAGE -->
+				
+				<!--  SOURCES LIST VIEW -->
+				<div id="sources_list" class="face back">
+					<div id="source_title" class="titlebar">
+						<div id="back_bt" onclick="flipBack();">
+				             <span class="button blue">Done</span>
+				             <h1></h1>
+				        </div>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</body>
+</html>

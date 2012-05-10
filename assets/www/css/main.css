@@ -1,0 +1,334 @@
+
+
+/* body {
+	
+	backgorund: #fff !important;	
+	margin: 0;	
+	font-family: "Helvetica Neue",HelveticaNeue,"Helvetica-Neue",Helvetica,"BBAlpha Sans",sans-serif;
+	
+}
+
+ */
+
+/** TITLEBAR **/
+
+
+.titlebar {
+	
+	background-color: #0E4B75;
+	background-image: -webkit-linear-gradient(#359EE7, #125F95 2%, #0A3655);
+	border-top-color: #0B3C5E;
+	border-bottom-color: #061F31;
+	font-size: 15px;
+    border-bottom: 1px solid #666;
+    color: #222;
+    display: block;
+    /*font-weight: bold;*/
+    padding: 10px 0;
+    text-align: center;
+    text-decoration: none;
+    height: 3em;
+}
+
+
+.titlebar h1 {
+    margin: 0;
+    padding: 0;	
+    color: white;
+    font-size: 25px;
+}
+
+.titlebar h2 {
+    
+    margin: 0;
+    padding: 0;	
+    color: white;
+    font-size: 25px;
+}
+
+
+/*** MAIN TABS ***/
+
+
+#tabs {
+	
+	width: 100%;	
+	height: 4em;
+	border-bottom: 1px solid #000;	
+}
+
+.tab {
+	
+	border-right: 1px solid #000;
+	display: inline-block;	
+	width: 20%;
+	height: 4em;
+	
+	
+}
+
+
+.normal_tab {
+
+	background: #677374;	
+	color: #000;
+
+}
+
+.active_tab {
+	
+	background: #392D3B;
+	color: white;	
+
+}
+
+
+
+
+/** MY APPS **/
+
+
+.app_entry {
+	
+	font-size: 14px;
+	color: #222222;
+	display: block;
+	font-weight: bold; 
+	margin-bottom: -1px; 
+	padding: 25px 10px; 
+	text-decoration: none;
+	border: solid #DDD;
+	border-width: 1px 1px 0 1px;
+	border-top-style: solid;
+	border-top-color: #DDD;
+	background: white;
+	height: 3.5em;
+	background-color: rgba(192,194,180, 0.2);
+	/*background-color: #B0D6E6;*/	
+		
+}
+
+
+
+.app_title {
+
+	font-size: 20pt;
+	color: #392D3B;
+	
+}
+
+
+.app_icon {
+	
+	float: left;
+	width: 20%;	
+	
+}
+
+.app_name {
+	
+	float: left;
+	width: 60%;	
+	height:3.5em;
+	
+}
+
+.app_name span {
+	
+	display: block;	
+	
+}
+
+.app_install {
+	
+	float:left;
+	width: 20%;	
+	height: 3.5em;
+	margin-top: 40px;
+}
+
+
+
+/** SHARE **/
+
+.share_div {
+	
+	font-size: 14px;
+	color: #222222;
+	display: block;
+	font-weight: bold; 
+	margin-bottom: -1px; 
+	padding: 25px 10px; 
+	text-decoration: none;
+	border: solid #DDD;
+	border-width: 1px 1px 0 1px;
+	border-top-style: solid;
+	border-top-color: #DDD;
+	background: white;
+	height: 3.5em;
+	background-color: rgba(192,194,180, 0.2);	
+	
+}
+
+
+
+
+.app_name span {
+	
+	text-transform:capitalize;
+}
+
+
+.share_icons div {
+	
+	
+	display: inline-block;	
+	
+}
+
+
+
+/** SHARE ITEM **/
+
+.share_button {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 17px;
+	color: #ffffff;
+	padding: 10px 120px;
+	background: -moz-linear-gradient(
+		top,
+		#0f4b73 0%,
+		#0f4b73);
+	background: -webkit-gradient(
+		linear, left top, left bottom, 
+		from(#0f4b73),
+		to(#0f4b73));
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border: 1px solid #134201;
+	-moz-box-shadow:
+		2px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 9px rgba(255,255,255,1);
+	-webkit-box-shadow:
+		2px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 9px rgba(255,255,255,1);
+	text-shadow:
+		0px -1px 0px rgba(000,000,000,0.4),
+		0px 1px 0px rgba(255,255,255,0.3);
+}
+
+#share_item_content {
+	
+	height: 5em;	
+	
+	
+}
+
+
+
+/** MAP **/
+#pd_map_content {
+	
+	position: absolute;	
+	
+}
+
+
+
+/** MY APPS **/
+
+
+.my_app_entry {
+	
+	font-size: 20px;
+	color: #222222;
+	display: block;
+	font-weight: bold; 
+	margin-bottom: -1px; 
+	padding: 25px 10px; 
+	text-decoration: none;
+	border: solid #DDD;
+	border-width: 1px 1px 0 1px;
+	border-top-style: solid;
+	border-top-color: #DDD;
+	background: white;
+	height: 3.5em;
+	background-color: rgba(192,194,180, 0.2);
+}
+
+
+.my_app_toggle {
+	
+	float: left;
+	width: 20%;
+	height:3.5em;
+}
+
+.my_app_name {
+	
+	float: left;
+	width: 60%;
+	height: 3.5em;
+}
+
+
+ul{
+    list-style:none;
+    width:100px;
+    height:26px;
+    position:absolute;
+    margin:-13px 0 0 -42px;
+}
+
+ul li{
+    float:left;
+    line-height:30px;
+    font-size:14px;
+    padding:2px 10px 0;
+    background: #E5E5E5;
+    background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F3F3F3), to(#E5E5E5));
+    text-shadow:0 1px 0 #FFF;
+    border-left:1px solid #D5D5D5;
+    border-top:1px solid #D5D5D5;
+    border-bottom:1px solid #D5D5D5;
+    -webkit-box-shadow:0 1px 0 #FFF inset, 0 0 5px rgba(0, 0, 0, .1) inset, 0 1px 1px rgba(0, 0, 0, .3);
+}
+
+ul li:first-child{
+    -webkit-border-radius:5px 0 0 5px;
+}
+ul li:last-child{
+    -webkit-border-radius:0 5px 5px 0;
+}
+
+ul li a{
+    text-decoration: none;
+    font-family:Helvetica, Arial;
+    text-transform:uppercase;
+    color:#a1a1a1;
+}
+
+.on{
+    background: #505050;
+    background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#777), to(#505050));
+    text-shadow:0 -1px 0 #444, 0 0 7px #9AE658;
+    border-right:1px solid #444;
+    border-top:1px solid #444;
+    border-bottom:1px solid #444;
+    -webkit-box-shadow:0 1px 2px rgba(0, 0, 0, .7) inset, 0 1px 0 #FFF;  
+}
+
+ul li:not(.on):active{
+    background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#ddd), to(#f1f1f1));
+}
+
+
+ul li.on a{
+    color:#7BBA47;
+    cursor: default;
+}
+
+
+
+

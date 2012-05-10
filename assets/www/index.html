@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tacita Home</title>
+   	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		
+    <link rel="stylesheet" href="css/main.css" type="text/css">
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/map.js"></script>
+    <script type="text/javascript" src="js/location.js"></script>
+    <script type="text/javascript" src="js/socket.js"></script>
+	<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript"
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBZCkdTjHC6bcy45eYvmq7DOqO0j3fhFlA&sensor=true">
+    </script>	
+		
+	
+	<script type="text/javascript">
+		
+		 //contains web sockets instance for each active app
+		 var sockets = [];
+	    
+	     //store positions of displays
+	     var pd_markers = [];
+      	 
+      	 //store position of the user
+         var user_marker = null;
+      	 var user_pos = null;
+      
+         //store displayID when user is next to it
+         var displays = [];
+	    
+	    
+	 	 $(function() {
+	
+			//localStorage.clear();
+			
+			console.log(localStorage['weather']);
+			loadApps();
+			showAllApps();
+			 
+	 		$("#all_apps").click(function() {
+				showAllApps();
+			});
+	
+			$("#my_apps").click(function() {
+				showMyApps();
+			});
+							 
+							 
+			$("#pd_map").click(function() {
+				insertMarkers(map);
+				showMap();
+			});		
+			
+			setViewport();
+			console.log("initializing map");
+			initializeMap();
+			loadDisplays();
+	       
+		});
+		
+		
+		
+		
+	</script>
+</head>
+	<body>
+		<script type="text/javascript">
+					
+			/**
+			 * Sends the preferences of the active apps to the server.
+			 * preferences are stored in localStorage
+			 */
+			function triggerUserPreference(displayID) {
+				alert("sending preferences");
+				console.log("sending preference");
+				
+				//user has some preferences
+				if("preference" in localStorage) {
+					
+					var user_preference = JSON.parse(localStorage["preference"]);
+					console.log(user_preference);
+					console.log("for each active socket");
+					for(var i = 0; i < sockets.length; i++) {
+						
+						var app_name = sockets[i].name;
+						var socket = sockets[i].socket;
+						
+						console.log(app_name);
+						if(user_preference.hasOwnProperty(app_name)) {
+							
+							var app_pref = {}
+							app_pref.kind = "mobileRequest";
+							app_pref.preference = user_preference[app_name];
+							app_pref.username = "mattia";
+							app_pref.displayID = displayID;
+							
+							console.log("SENDING");
+							console.log(app_pref);
+							
+							sockets[i].socket.send(JSON.stringify(app_pref));
+						}
+					}
+				} else {
+					console.log("no preferences are saved");
+				}
+				
+			}
+
+			function activateUserPreference(appName) {
+				
+				DB.activatePreferenceEntry(appName);
+				
+			}
+	
+		    function createEntry(appName, prefValue) {
+		
+				DB.createPreferenceEntry(appName, prefValue);
+			}
+		    
+		    
+		    
+				
+		</script>
+		<div id="tabs">
+			<div id="all_apps" class="tab active_tab">
+				<div><span>All apps</span></div>
+			</div>
+			<div  id="my_apps" class="tab normal_tab">
+				<div><span>My apps</span></div>
+			</div>
+			<!-- <div  id="share" class="tab normal_tab">
+				<div><span>Share</span></div>
+			</div> -->
+			<div id="pd_map" class="tab normal_tab">
+				<span>Map</span>
+			</div>
+			
+		 </div>
+		 
+		 
+		 <!--  MY APPS VIEW -->
+		 <div id="my_apps_content">
+	   	 </div>
+	   	 
+	   	 
+	   	 <!-- ALL APPS VIEW -->
+	   	 <div id="all_apps_content">
+	   	 </div>
+	   	 
+	   	 
+	   	 <!-- SHARE -->
+	   	 <div id="share_content">
+	   	 </div>
+	   	 
+	   	 
+	   	 <!--  SHARE ITEM VIEW -->
+	   	 <div id="share_item">
+	   	 </div>
+	   	 
+	   	 
+	   	 <!-- MAP VIEW -->
+	   	 <div id="pd_map_content" >
+	   		 
+	   	 </div>
+		
+		
+	</body>
+</html>

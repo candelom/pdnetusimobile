@@ -1,0 +1,366 @@
+/* DISPLAY */
+
+
+@import url(http://fonts.googleapis.com/css?family=Ubuntu);
+
+
+.application.newsfeed {
+    display: table;
+ 	background-color: #00d607;
+}
+
+.application.newsfeed h1{
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+	color: white;
+	white-space: pre-line;
+	height: 200px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 32px;
+}
+
+/* DISPLAY END  */
+
+.toolbar {	
+	overflow: hidden;
+	padding: 0 0.2em;
+	position: relative;
+	height: 2.0em;	
+}
+	
+
+
+/*** SOURCES VIEW ***/
+
+
+
+.source_entry {
+	
+	font-size: 14px;
+	color: #222222;
+	display: block;
+	font-weight: bold; 
+	margin-bottom: -1px; 
+	padding: 25px 10px; 
+	text-decoration: none;
+	border: solid #DDD;
+	border-width: 1px 1px 0 1px;
+	border-top-style: solid;
+	border-top-color: #DDD;
+	background: white;
+	height: 2em;
+	/*opacity: 0.2;*/
+	background-color: rgba(192,194,180, 0.2);
+}
+
+
+.source span {
+	font-style: normal;
+	font-weight: normal;	
+}
+
+
+.source_icon {
+	float:left;	
+	width: 10%;
+}
+
+.source_name {
+
+	float:left;	
+	width: 60%;
+	text-align:left;
+}
+
+
+.source_name span {
+	
+
+	display: block;
+}
+
+.source_link {
+	
+	width: 30px;
+	clear: both;
+	font-size: 6pt;	
+	color: blue;
+	text-overflow: ellipsis-word;
+}
+
+
+.source_link span {
+	
+	
+	width: 20px;
+	
+}
+
+
+
+.source_cb {
+	
+	float:left;	
+	width: 15%;
+}
+
+
+
+/**** TOPICS VIEW ****/
+
+.list-topics:first-child {
+	
+	border-top-left-radius: 10px 5px;
+	border-top-right-radius: 10px 5px;
+		
+	
+}
+
+.topic_entry {
+	
+	display: block;
+	font-weight: bold; 
+	margin-bottom: -1px; 
+	padding: 25px 10px; 
+	text-decoration: none;
+	border: solid #DDD;
+	border-width: 1px 1px 0 1px;
+	border-top-style: solid;
+	border-top-color: #DDD;
+	background: white;
+	position: relative;
+	font-size: 20px;
+	height: 45px;
+}
+
+
+
+
+.topic_name {
+	
+	float: left;
+	width: 70%;
+	
+}
+
+
+.topic_name span {
+	
+	text-align: left;	
+}
+
+
+.topic_sel {
+	
+	float:left;	
+	width: 20%;
+	
+}
+
+.tapped {
+	
+	background: #006BB6;
+	background-image: -webkit-linear-gradient(#50B7FF,#0080DA 2%,#005692);
+	color: white;
+	text-shadow: rgba(0, 0, 0, 0.5) 0 -0.08em 0;
+	
+}
+
+
+/** PAGE FLIP TRANSITION **/
+
+#Flip {
+	-webkit-perspective: 1000;
+	/*position: absolute;*/
+}
+
+.pagen {
+	min-height: 100%;
+	width: 100%;
+	position: absolute;
+}
+.face {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	-webkit-backface-visibility: hidden;
+	-webkit-transform-style: preserve-3d;
+	-webkit-transition: all .5s ease-in-out;
+}
+#Flip .face.front {
+	-webkit-transform: rotateY(0deg);
+	background-color: #fffccf;
+}
+#Flip .face.back {
+	-webkit-transform: rotateY(180deg);
+	-webkit-box-sizing: border-box;
+	background-color: rgba(0,0,0,0.125);
+}
+#Flip .face.front.flip  {
+	-webkit-transform: rotateY(-180deg);	
+}
+#Flip .face.back.flip {
+	-webkit-transform: rotateY(0deg);	
+}
+
+
+
+/**** BACK BUTTON  ***/
+
+.button.blue {
+			display: inline-block;
+			border-radius: 12px;
+			-webkit-border-radius: 12px;
+			-moz-border-radius: 12px;
+			/*background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(86,213,255,0.90)), color-stop(0.5, rgba(59,145,255,0.70)), color-stop(0.5, rgba(0,114,255,0.70)), to(rgba(0,133,255,0.80)));*/ 
+			background-color: #006BB6;
+			background-image: -webkit-linear-gradient(#50B7FF,#0080DA 2%,#005692);
+			color: #fff;
+			text-shadow: #000 0 1px 0;
+			font: bold 13px/17px Helvetica, Sans-serif;
+			padding: 9px 11px;
+			float:right;
+			margin-left: 10px;
+}
+
+.button.white {
+		display: inline-block;
+		-webkit-border-radius: 12px;
+		-webkit-box-shadow: 2px 2px 3px #999; 
+		border: solid 3px rgb(110,110,110);
+		border-radius: 12px;
+		background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(234,234,234,0.90)), color-stop(0.5, rgba(195,195,195,0.70)), color-stop(0.5, rgba(166,166,166,0.70)), to(rgba(167,167,167,0.80))); 
+		color: #000;
+		text-shadow: #fff 0 1px 0;
+		font: bold 16px/20px Helvetica, Sans-serif;
+		padding: 9px 50px;
+	}
+	.button.white:hover, .button.white.hover {
+		background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(135,148,203,0.85)), color-stop(0.5, rgba(34,56,159,0.75)), color-stop(0.5, rgba(0,27,145,0.75)), to(rgba(2,59,152,0.65))); 
+		color: #fff;
+		text-shadow: #000 0 1px 0;
+		-webkit-box-shadow: inset rgba(207,207,255,0.75) 0px 1px 1px;
+	}
+		
+.button.blue:hover, .button.white.hover {
+	/*background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(135,148,203,0.85)), color-stop(0.5, rgba(34,56,159,0.75)), color-stop(0.5, rgba(0,27,145,0.75)), to(rgba(2,59,152,0.65)));*/
+	background-color: #0062A7;
+	background-image: -webkit-linear-gradient(#004474,#00538D 10%,#0062A7 65%,#0064A9);
+	
+	
+	color: #fff;
+	text-shadow: #000 0 1px 0;
+	-webkit-box-shadow: inset rgba(207,207,255,0.75) 0px 1px 1px;
+}
+
+
+
+.bottom_bar {
+	
+	background-color: #0E4B75;
+	background-image: -webkit-linear-gradient(#359EE7, #125F95 2%, #0A3655);
+	border-top-color: #0B3C5E;
+	border-bottom-color: #061F31;	
+	border-top-width: .1em;	
+	border-top-style: solid;
+	height: 3em;
+	padding: 0;
+	bottom: 0;
+}
+
+
+
+
+.tab {
+
+	width: 100px;
+	border-radius: 0.25em;
+	-webkit-border-radius: 0.25em;
+	-moz-border-radius: 0.25em;
+	padding-top: .2em;
+	min-width: 3.3em;
+	
+}
+
+
+.tab_normal {
+	
+	color: #63B4EC;
+		
+	
+}
+
+.active_tab {
+	background-color: #0B3C5E;
+	background-image: -webkit-linear-gradient(#061F31, #092E47 10%, #0B3C5E 65%, #0C3E60);
+	text-shadow: rgba(0, 0, 0, 0.5) 0 -0.08em 0;
+	-webkit-box-shadow: #092e47 0 0 0.25em inset;
+	box-shadow: #092e47 0 0 0.25em inset;	
+	color: white;
+}
+
+
+
+
+
+/** ELEMENTS STYLING ***/
+
+
+.custom-checkbox {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-checkbox > .box {
+  position: relative;
+  display: block;
+  width: 14px;
+  height: 14px;
+  border: 1px solid #ccc;
+  background-color: #eee;
+  border-radius: 4px;
+}
+
+.custom-checkbox > .box > .tick {
+  position: absolute;
+  left: 2px;
+  top: -2px;
+  width: 14px;
+  height: 6px;
+  border-bottom: 2px solid #333;
+  border-left: 2px solid #333;
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+  display: none;
+}
+
+.custom-checkbox > input:checked + .box > .tick {
+  display: block;
+}
+
+.custom-checkbox > input {
+  position: absolute;
+  outline: none;
+  left: 0;
+  top: 0;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  border: none;
+  margin: 0;
+  opacity: 0;
+  z-index: 1;
+}
+
+.custom-checkbox > input:active + .box {
+  border-color: #aaa;
+  background-color: #ddd;
+}​
+
+

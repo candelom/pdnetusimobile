@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>Photostream</title>
+		<link rel="stylesheet" type="text/css" href="css/photostream.css" />
+		<link rel="stylesheet" type="text/css" href="js/jquery-mobile/jquery.mobile-1.1.0.min.css" />
+		<script src="js/javascripts/jquery-mobile/jquery.mobile-1.1.0.min.js"></script>
+		
+		
+	    <script>
+	      $(document).bind("mobileinit", function(){
+	        $.mobile.touchOverflowEnabled = true;
+	      });
+	    </script>
+	    <script type="text/javascript" charset="utf-8">
+	
+	    	//create local WebSocket
+			var app_server = "ws://172.16.224.104:9000/mobile/photostream/socket";  
+	   	 	var app_socket = new WebSocket(app_server);	
+	           
+	        $(function() {
+				
+	            var receiveEvent = function(event) {
+	            var data = JSON.parse(event.data)
+	                // Handle errors
+	                if(data.error) {
+	                    socket.close()
+	                    $("#onError span").text(data.error)
+	                    $("#onError").show()
+	                    return
+	                } else {
+	                    $("#onChat").show()
+	                    $("#onError").hide()
+	                }
+	                
+	                // Create the photo element
+	                var myP = $('<p class="sent"></p>')
+	                myP.html(data.message)
+	                $('#messages').append(myP)
+	            }
+	            
+	            
+	            var sendId = function(event) {
+	               var newDate = new Date;
+	               return newDate.getTime();
+	               socket.send(JSON.stringify({username: "username"}));
+	            }
+	            
+	            
+	            var handleReturnKey = function(e) {
+	                if(e.charCode == 13 || e.keyCode == 13) {
+	                    e.preventDefault()
+	                    sendMessage()
+	                } 
+	            }
+	
+		          $("#talk").keypress(handleReturnKey)  
+		          socket.onmessage = receiveEvent
+		          
+		          $("#albums").hide();
+		          $("#sources").hide();
+		          setBackButton();
+			      initializeFavoriteView();
+	            
+	        })
+	    </script>
+	</head>
+	<body>
+    
+    <div id="fb-root"></div>
+      <script>
+
+        // Load the SDK Asynchronously
+        (function(d){
+           var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+           if (d.getElementById(id)) {return;}
+           js = d.createElement('script'); js.id = id; js.async = true;
+           js.src = "//connect.facebook.net/en_US/all.js";
+           ref.parentNode.insertBefore(js, ref);
+        }(document));
+        
+        
+          // Init the Facebook SDK upon load
+	      window.fbAsyncInit = function() {
+	        FB.init({
+	          appId      : '361921140516335', // App ID
+	          channelUrl : '//'+window.location.hostname+'/channel', // Path to your Channel File
+	          status     : true, // check login status
+	          cookie     : true, // enable cookies to allow the server to access the session
+	          xfbml      : true  // parse XFBML
+	        });
+	        
+	        
+		         // listen for and handle auth.statusChange events
+	        FB.Event.subscribe('auth.statusChange', function(response) {
+	        
+	          console.log(response);
+	          if (response.authResponse) {
+	          
+	            // user has auth'd your app and is logged into Facebook
+	            var results = $("#albums_res");
+	            // results.html("<img src=\"img/loading.gif\" />");
+	   
+	            getAlbums(addCovers);              
+	         
+	            document.getElementById('auth-loggedout').style.display = 'none';
+	            document.getElementById('auth-loggedin').style.display = 'block';
+	            $('#fb_slider').val('on').slider('refresh');
+	          }
+	          else {
+	            // user has not auth'd your app, or is not logged into Facebook
+	            document.getElementById('auth-loggedout').style.display = 'block';
+	            document.getElementById('auth-loggedin').style.display = 'none';
+	            $('#fb_slider').val('off').slider('refresh');
+	          }
+	        });
+			
+			
+	        setFBLogin();
+	        // respond to clicks on the login and logout links
+	        document.getElementById('auth-loginlink').addEventListener('click', function(){
+	          FB.login();
+	        });
+	        
+	        document.getElementById('auth-logoutlink').addEventListener('click', function(){
+	          FB.logout();
+	        }); 
+	       }
+        
+	</script>
+
+
+
+
+   <div id="photostream" data-role="page">
+
+    <!--  ALBUMS VIEWS -->
+    <div data-role="header" data-position="fixed">
+      <div data-role="navbar">
+          <ul>
+            <li><a href="#" data-icon="star" onclick="showFavorites();" class="ui-btn-active">Favorites</a></li>
+            <li><a href="#" data-icon="grid" onclick="showAlbums();">Albums</a></li>
+            <li><a href="#" data-icon="gear" onclick="showSources();">Sources</a></li>
+          </ul>
+      </div> 
+    </div>
+
+
+     <div data-role="content">
+        
+        <!-- FAVORITES VIEWS -->
+       <div id="favorites" style="height:200px">          
+              <a href="#" onclick ="publishAlbums()" id="publish_bt" data-role="button" data-theme="b" style="display:none;">Publish</a>
+        </div>
+
+
+        <!-- ALBUMS VIEW -->
+        <div id="albums">
+
+          <div id="auth-status" style="display:none;">
+                <div id="auth-loggedout">
+                 <a href="#" id="auth-loginlink">Login</a>
+                </div>
+                <div id="auth-loggedin" style="display:none">
+                  Hi, <span id="auth-displayname"></span>  
+                  (<a href="#" id="auth-logoutlink">logout</a>)
+                </div>
+            </div>
+            <div id="albums_res">
+            </div>
+        </div>
+
+        <!-- ALBUMS'S IMAGES VIEW -->
+        <div id="images" style="display:none;">
+           <a id="back_bt" href="#">Back</a>
+              <div id="add_fav_cb">
+                  	<input type="checkbox" name="add_cb" id="add_cb"/>
+                    <label for="checkbox1">
+                        Add to favorites
+                    </label>
+               </div>
+          </div>
+           <div id="album_imgs" class="ui-grid-b">
+           </div>    
+        </div>
+
+        <!-- SOURCES VIEW -->
+        <div id="sources">
+            <div class="source">
+               <div class="source_name">
+                  <label for="flip-a">Facebook</label>
+               </div>
+               <div class="source_bt">
+                  <select name="fb_slider" id="fb_slider" data-role="slider">
+                    <option id="fb_on" value="off" selected="selected">Off</option>
+                    <option id="fb_off" value="on">On</option>
+                  </select>
+                </div>
+            </div>
+
+            <div class="source">
+              <div class="source_name">
+                <label for="flip-a">Flickr</label>
+              </div>
+              <div class="source_bt">
+                <select name="slider" id="flip-a" data-role="slider">
+                  <option value="off">Off</option>
+                  <option value="on">On</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="source">
+                <div class="source_name">
+                    <label for="flip-a">Picasa</label>
+                </div>
+                <div class="source_bt">
+                  <select name="slider" id="flip-a" data-role="slider">
+                    <option value="off">Off</option>
+                    <option value="on">On</option>
+                  </select>
+                </div>
+            </div>
+      </div>      
+      
+     </div><!-- end content -->
+
+	</body>
+</html>
+  
+   
+  

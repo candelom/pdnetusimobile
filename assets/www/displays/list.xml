@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <display>
+    <id>1</id>
+    <name>display1</name>
+    <width>1000</width>
+    <height>500</height>
+    <latitude>46.01103</latitude>
+    <longitude>8.958049</longitude>
+  </display>
+</root>

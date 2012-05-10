@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<apps>
+  <app>
+    <name>News Feeds</name>
+    <namespace>feed</namespace>
+    <view>app/news/view.html</view>
+    <socket>ws://172.16.224.104:9000/feed/socket</socket>
+  </app>
+  <app>
+    <name>Weather</name>
+    <namespace>weather</namespace>
+    <view>apps/weather/view.html</view>
+    <socket>ws://172.16.224.104:9000/weather/socket</socket>
+  </app>
+  <app>
+    <name>Weather</name>
+    <namespace>weather</namespace>
+    <view>apps/weather/view.html</view>
+    <socket>ws://172.16.224.104:9000/weather/socket</socket>
+  </app>
+</apps>
