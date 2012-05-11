@@ -5,6 +5,7 @@ import org.apache.cordova.DroidGap;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
@@ -24,17 +25,15 @@ public class PhoneGapActivity extends DroidGap {
         super.loadUrl("file:///android_asset/www/index.html");
         
         // attach websocket factory
+        appView.getSettings().setJavaScriptEnabled(true);
+        appView.setWebChromeClient(new WebChromeClient());
         appView.addJavascriptInterface(new WebSocketFactory(appView), "WebSocketFactory");
-        
         Intent intent = new Intent(this, LocationService.class);
         startService(intent);
         
-        WebSettings settings = appView.getSettings(); 
-        settings.setJavaScriptEnabled(true); 
         
         appView.addJavascriptInterface(new DBInterface(this), "DB");
-      
         
-}
+	}
 	
 }

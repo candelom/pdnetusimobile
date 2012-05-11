@@ -21,18 +21,15 @@ public class PreferenceOpenHelper extends SQLiteOpenHelper {
 										                	"pref_values text not null" +
 										                ");";
 
-    
     PreferenceOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     
-    
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(PREF_TABLE_CREATE);
     }
-
 
 
 	@Override
@@ -45,4 +42,8 @@ public class PreferenceOpenHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + PREF_TABLENAME);
 		onCreate(db);
 	}
+	
+	
+	
+	
 }

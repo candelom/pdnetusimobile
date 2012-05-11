@@ -10,10 +10,11 @@
 		 */
 		function loadApps() {
 		
+			localStorage.clear();
 			
 			$.ajax({
 				 type: "GET",
-				 url: "apps/list.xml",
+				 url: "http://172.16.224.104:9000/assets/applications/list.xml",
 				 dataType: "xml",
 				 success: function(xml) {
 				 
@@ -25,8 +26,7 @@
 						 var app_name_space = $(this).find("namespace").text();
 						 var app_view = $(this).find("view").text();
 						 var app_icon = $(this).find("icon").text();
-						 var app_socket = $(this).find("socket").text();
-						 
+						 var app_socket = $(this).find("websocket_address").text();
 						 
 						 var app_div = "<div id='"+app_name_space+"' class='app_entry'>"+
 						 					"<div class='app_icon'><img src='"+app_icon+"' width='40px' height='40px'></div>"+
@@ -38,17 +38,13 @@
 						 				"</div>";
 						 
 						 
-						 
 						 $("#all_apps_content").append(app_div);
 						 
 						 //set install function on click
 						 $("#"+app_name_space).click(function() {
-						 	
 							installApp(app_name_space);
 							$(this).off('click');
-						 
 						 });
-						 
 						 
 						 
 					 });
@@ -104,8 +100,6 @@
 	
 	}
 
-
-	
 		
 
 
@@ -207,7 +201,7 @@
 		$("#all_apps_content").hide();
 		$("#my_apps_content").hide();
 		$("#share_content").hide();
-		$("#tabs").hide();
+		//$("#tabs").hide();
 		
 		
 	}
@@ -282,109 +276,17 @@
 	
 	
 
-	/**
-	 * Adds app into locally installed app.
-	 * @param app_name_space
-	 * @returns
-	 */
-	function installApp(app_name_space) {
-		
-		console.log(typeof(app_name_space));
-		var app_socket = "";
-		var app_view = "";
-		var app_name = "";
-		
-		
-		$.ajax({
-			type: "GET",
-			url: "apps/list.xml",
-			dataType: "xml",
-			success: function(xml) {
-				 
-				var num_of_apps = $(xml).find("app").length;
-				$(xml).find('app').each(function(i){
-				
-					var cur_namespace = $(this).find("namespace").text();
-					if(cur_namespace == app_name_space) {
-						console.log("setting app info");
-						app_name = $(this).find("name").text();
-						app_view = $(this).find("view").text();
-						app_socket = $(this).find("socket").text();
-						
-					}
-					
-					
-				});
-				
-				//update my_list.xml file by adding app
-				$.ajax({
-					type: "POST",
-					url: "save_xml.php",
-					data: {name: app_name, namespace: app_name_space, view: app_view, socket: app_socket},
-					success: function() {
-						
-						var my_app_div = "<div id='my_"+app_name_space+"' class='my_app_entry'>"+
-											"<div class='my_app_name'>"+app_name+"</div>"+
-											"<div class='my_app_toggle'>"+
-												"<ul>"+
-													"<li class='on'><a href='#'>OFF</a></li>"+
-													"<li><a href='#'>ON</a></li>"+
-												"</ul>"+
-											"</div>"+
-										"</div>";
-											
-						
-						$("#my_apps_content").append(my_app_div);
-						
-						//set link to app configuration view
-						$("#my_"+app_name_space+" .my_app_name").click(function() {
-							window.location.replace(app_view); 
-						});
-						
-						
-						//set button to activate or disactivate application socket
-						$("#my_"+app_name_space+" ul li").click(function(){
-							$("#my_"+app_name_space+" ul li").removeClass("on");
-							$(this).addClass("on");
-							
-							var toggle = $(this).find("a").text();
-							if(toggle == "ON") {
-								
-								activateUserPreference(app_name_space);
-								
-							} else if(toggle = "OFF"){
-								
-								deactivateAppSocket(app_socket);
-								console.log(sockets);
-							}
-							
-						});
-						
-						markInstalledApp(app_name_space);
-						
-						//create entry in SQL android DB
-						createEntry("mattia", app_name_space)
-						showMyApps();
-						
-					}
-				});
-				
-			}
-			});
-			
-			
-		
-	}
+	
 	
 	
 	function loadMyApps() {
 		
 		$.ajax({
 			 type: "GET",
-			 url: "apps/my_list.xml",
+			 url: "../apps/my_list.xml",
 			 dataType: "xml",
 			 success: function(xml) {
-				 
+				 alert("my app loaded");
 				 $(xml).find("app").each(function() {
 					 
 					 

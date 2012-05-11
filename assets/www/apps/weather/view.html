@@ -7,27 +7,32 @@
     <link rel="stylesheet" href="../../css/weather.css" type="text/css">
     <script type="text/javascript" src="../../js/jquery-1.7.1.min.js"></script>
 	<script type="text/javascript" src="../../js/weather.js"></script>
-	<script type="text/javascript" src="../../js/socket.js"></script>
+		<script type="text/javascript" src="../../js/socket.js"></script>
 	
 	<script type="text/javascript" charset="utf-8">
  		var socket;
           
         $(function() {
            
-            test("ciao");
            
         	//create local WebSocket
-			var app_server = "ws://192.168.1.37:9000/weather/socket";  
+			var app_server = "ws://172.16.224.104:9000/weather/socket";  
 	   	 	var app_socket = new WebSocket(app_server);		            
+		            
+		            
+		    
 		            
 	        var sendSources = function (){
 	        	
-	        	updateEntry("weather", $("#location").val());
+	        	if(!("preference" in localStorage)) {
+	        		localStorage["preference"] = JSON.stringify({});
+				}	        	
 				
 	        	var user_pref = JSON.parse(localStorage['preference']);
 	        	user_pref.weather = $("#location").val();
 	        	localStorage['preference'] = JSON.stringify(user_pref);
-	        
+	        	
+	        	
 	        	var jsonToSend = {}
 	        	jsonToSend.kind = "mobileRequest";
 	        	jsonToSend.preference = $("#location").val();
@@ -36,6 +41,7 @@
 	        	
 	        	console.log(jsonToSend);
 	        	app_socket.send(JSON.stringify(jsonToSend));
+	        	updateEntry("weather", [$("#location").val()]);
 	        }
                  
             $("#sendLocation").click(function() {
@@ -45,20 +51,10 @@
                       
         })
         
-        
-         function test(toast) {
-		        DB.showToast(toast);
-		 }
-		 
-		 
-		function updateEntry(appName, prefValue) {
+        function updateEntry(appName, prefValue) {
 		
-			DB.updatePreferenceEntry(appName, prefValue);
-		}
-
-
-		 
-				
+					DB.updatePreferenceEntry(appName, prefValue);
+				}
        
     </script>
 </head>

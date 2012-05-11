@@ -11,7 +11,6 @@ public class Preference {
 	
 	
 	
-	
 	public long getId() {
 		
 		return id;
@@ -71,7 +70,7 @@ public class Preference {
 	
 	
 	
-	public void setValues(String prefValue) {
+	public void setPrefValue(String prefValue) {
 		
 		this.prefValue = prefValue;
 	}

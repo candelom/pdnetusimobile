@@ -53,16 +53,16 @@ public class WebSocketFactory {
 		this.appView = appView;
 	}
 
-	public JSWebSocket getInstance(String url) {
+	public WebSocket getInstance(String url) {
 		// use Draft75 by default
-		return getInstance(url, JSWebSocket.Draft.DRAFT75);
+		return getInstance(url, WebSocket.Draft.DRAFT75);
 	}
 
-	public JSWebSocket getInstance(String url, JSWebSocket.Draft draft) {
-		JSWebSocket socket = null;
+	public WebSocket getInstance(String url, WebSocket.Draft draft) {
+		WebSocket socket = null;
 		Thread th = null;
 		try {
-			socket = new JSWebSocket(appView, new URI(url), draft, getRandonUniqueId());
+			socket = new WebSocket(appView, new URI(url), draft, getRandonUniqueId());
 			th = socket.connect();
 			return socket;
 		} catch (Exception e) {

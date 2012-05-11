@@ -1,21 +1,26 @@
 package usi.inf.ch.phonegap;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.NotYetConnectedException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.codehaus.jackson.JsonParser;
 import org.java_websocket.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
@@ -93,7 +98,7 @@ public class LocationService extends Service {
 					if(displayID != null) {
 						Log.v("displayID", displayID);
 						Toast.makeText(getApplicationContext(), "displayID = "+displayID, Toast.LENGTH_SHORT).show();
-						triggerPreferences(datasource);
+						triggerPreferences(displayID);
 					}
 				}
 
@@ -119,11 +124,13 @@ public class LocationService extends Service {
 			};
 
 			// Register the listener with the Location Manager to receive location updates
-			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 0, locationListener);
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 
 		}
 	}
 
+	
+	
 
 
 
@@ -151,6 +158,7 @@ public class LocationService extends Service {
 		datasource = new PreferenceDataSource(this);
 		datasource.open();
 
+		datasource.deleteAll();
 		// start ID so we know which request we're stopping when we finish the job
 		Message msg = mServiceHandler.obtainMessage();
 		msg.arg1 = startId;
@@ -174,6 +182,7 @@ public class LocationService extends Service {
 	@Override
 	public void onDestroy() {
 		Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show(); 
+		datasource.close();
 	}
 
 
@@ -288,7 +297,7 @@ public class LocationService extends Service {
 
 
 
-	public void triggerPreferences(PreferenceDataSource datasource) {
+	public void triggerPreferences(String displayID) {
 
 		Log.v("triggerPreference", "sending preferences");
 		List<Preference> prefs = datasource.getAllPreferences();
@@ -305,18 +314,20 @@ public class LocationService extends Service {
 
 				String appName = curPref.getAppName();
 				String prefValue = curPref.getPrefValue();
+				Log.v("prefValue", prefValue);
+
 				Set<String> apps = activeSockets.keySet();
 				Log.v("checking", "is active or not");
 				//if the socket is not already stored create a new one
 				if(!apps.contains(appName)) {
 
 					Log.v("create", "createnew socket");
-					createAppSocket(appName, prefValue);
+					createAppSocket(appName, prefValue, displayID);
 
 				} else {
 					Log.v("send", "just send preference");
 					WebSocketClient appSocket = activeSockets.get(appName);
-					sendPreference(appSocket, prefValue);
+					sendPreference(appSocket, prefValue, displayID);
 
 				}
 			}
@@ -328,19 +339,32 @@ public class LocationService extends Service {
 
 
 
-	public void sendPreference(WebSocketClient socket, String prefValue) {
+	public void sendPreference(WebSocketClient socket, String prefValue, String displayID) {
 
-		Log.v("sending", "send preference");
-
-		JSONObject msg = new JSONObject(); 
+		ArrayList<String> f_values = new ArrayList<String>();
+		String[] values = prefValue.split(", ");
+		for(int j =0; j < values.length; j++) {
+			
+			f_values.add(values[j]);
+		}
+		
+		Log.v("values", prefValue);
+		printPreferences(f_values);
+		
 		try {
-			msg.put("kind", "mobileRequest");
-			msg.put("preference", prefValue);
-			msg.put("displayID", "1");
-			msg.put("username", "mattia");
-			socket.send(msg.toString());
+				JSONObject msg = new JSONObject(); 
+				msg.put("kind", "mobileRequest");
+				if(values.length == 1) {
+					msg.put("preference", values[0]);
+				} 
+				else {
+					msg.put("preference", new JSONArray(f_values));
+				}
+				msg.put("displayID", displayID);
+				msg.put("username", "mattia");
+				socket.send(msg.toString());
 
-		} catch (JSONException e) {
+		}  catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 
@@ -355,8 +379,14 @@ public class LocationService extends Service {
 	}
 
 
+	
 
-	public void createAppSocket(String appName, final String prefValue) {
+	/**
+	 * Create WebSocketClient for the given application
+	 * @param appName
+	 * @param prefValue
+	 */
+	public void createAppSocket(final String appName, final String prefValue, final String displayID) {
 
 		try {
 
@@ -384,9 +414,8 @@ public class LocationService extends Service {
 				public void onOpen(ServerHandshake arg0) {
 					// TODO Auto-generated method stub
 					Log.v("connect", "connect");
-					sendPreference(this, prefValue);
+					sendPreference(this, prefValue, displayID);
 				}
-
 			};
 
 			app_socket.connect();
@@ -400,11 +429,17 @@ public class LocationService extends Service {
 			e.printStackTrace();
 		}
 
-
-
-
 	}
 
+	
+	
+	public void printPreferences(ArrayList<String> values) {
+		
+		for(int i = 0 ; i < values.size(); i++) {
+			Log.v("pref_value", values.get(i));
+		}
+		
+	}
 
 
 

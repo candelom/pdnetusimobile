@@ -33,12 +33,12 @@
 		for(key in localStorage) {
 			var src_obj = JSON.parse(localStorage[key]);
 			src_html += "<div id='"+src_obj.id+"' class='source_entry'>"+
-			"<div class='source_img'>"+
-			"</div>"+
-			"<div class='source_info'>"+
-			"<span>"+src_obj.name+"</span>"+		
-			"</div>"+
-			"</div>";
+							"<div class='source_img'>"+
+							"</div>"+
+							"<div class='source_info'>"+
+							"<span>"+src_obj.name+"</span>"+		
+							"</div>"+
+						"</div>";
 		}
 		$("#list_sources").append(src_html);
 	}
@@ -53,7 +53,7 @@
 		console.log("loading sources");
 		$.ajax({
 			type: "GET",
-			url: "http://172.16.224.104:8888/tacita/feed.xml",
+			url: "feed.xml",
 			dataType: "xml",
 			success: function(xml) {
 				 $(xml).find('topic').each(function(){
@@ -119,6 +119,9 @@
 		} else {
 			localStorage['feed'] = JSON.stringify([source]);
 		}
+		
+		console.log("checkSource");
+		console.log("localStorage => "+localStorage['feed']);
 	}
 	
 	
@@ -126,7 +129,6 @@
 	function removeSource(obj, source) {
 		console.log("remove from sources");
 		obj.html("");
-		
 		
 		var stored_sources = JSON.parse(localStorage['feed']);
 		localStorage['feed'] = JSON.stringify(removeFromArray(source, stored_sources));
@@ -144,8 +146,8 @@
 	}
 	
 
-
 	
+
 	function removeFromArray(value, array) {
 		
 		console.log("value => "+ value);

@@ -3,6 +3,9 @@ package usi.inf.ch.phonegap;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -39,10 +42,11 @@ public class PreferenceDataSource {
 	 * @param pref
 	 * @return
 	 */
-	public Preference createPreference(String appName, int isActive, String values) {
+	public Preference createPreference(String appName, int isActive, String prefValue) {
+		
 		ContentValues val = new ContentValues();
 		val.put("isActive", isActive);
-		val.put("pref_values", values);
+		val.put("pref_values", prefValue);
 		val.put("appName", appName);
 		long insertId = database.insert("preferences", null, val);
 		
@@ -57,6 +61,26 @@ public class PreferenceDataSource {
 	
 	
 	
+	/**
+	 * Selects the preference given the appName (unique)
+	 * @param appName
+	 * @return
+	 */
+	public Preference getPreference(String appName) {
+		
+		Preference selPref = null;
+		Cursor cursor = database.query("preferences", allColumns, "appName = '" + appName+"'", null, null, null, null);
+		Log.v("rows number", cursor.getCount()+"");
+		if(cursor.getCount() > 0) {
+			Log.v("already", "exists");
+			cursor.moveToFirst();
+			selPref = cursorToPref(cursor);
+		}
+		cursor.close();
+		return selPref;
+	}
+	
+
 	
 	/**
 	 * Update the given preference object.
@@ -64,12 +88,12 @@ public class PreferenceDataSource {
 	 */
 	public void updatePreference(String appName, String prefValue) {
 		
-		Log.v("update string", prefValue);
 		String strFilter = "appName = '"+ appName+"'";
 		ContentValues args = new ContentValues();
-		args.put("pref_value", prefValue.toString());
+		args.put("pref_values", prefValue);
 		database.update("preferences", args, strFilter, null);
 	}
+	
 	
 	
 	/**
@@ -94,6 +118,8 @@ public class PreferenceDataSource {
 		long id = pref.getId();
 		database.delete("preferences", "id = " + id, null);
 	}
+	
+	
 
 	
 	/**
@@ -133,7 +159,7 @@ public class PreferenceDataSource {
 		pref.setId(cursor.getLong(0));
 		pref.setAppName(cursor.getString(1));
 		pref.setIsActive(cursor.getInt(2));
-		pref.setValues(cursor.getString(3));
+		pref.setPrefValue(cursor.getString(3));
 		return pref;
 	}
 	

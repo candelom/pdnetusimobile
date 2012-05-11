@@ -3,7 +3,6 @@
 <head>
     <title>Tacita Home</title>
    	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-		
     <link rel="stylesheet" href="css/main.css" type="text/css">
     <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript" src="js/map.js"></script>
@@ -34,9 +33,8 @@
 	 	 $(function() {
 	
 			//localStorage.clear();
-			
-			console.log(localStorage['weather']);
 			loadApps();
+			loadMyApps();
 			showAllApps();
 			 
 	 		$("#all_apps").click(function() {
@@ -52,15 +50,13 @@
 				insertMarkers(map);
 				showMap();
 			});		
-			
+			updateUserPosition(46.011149, 8.957701, 50);
 			setViewport();
 			console.log("initializing map");
 			initializeMap();
 			loadDisplays();
 	       
 		});
-		
-		
 		
 		
 	</script>
@@ -108,11 +104,15 @@
 				
 			}
 
+
+
 			function activateUserPreference(appName) {
 				
-				DB.activatePreferenceEntry(appName);
+				DB.activateUserPreferenceEntry(appName);
 				
 			}
+			
+			
 	
 		    function createEntry(appName, prefValue) {
 		
@@ -120,6 +120,99 @@
 			}
 		    
 		    
+		    function udpateMyApps(path, app_name, app_name_space, app_view, app_socket) {
+		    
+		    	DB.updateXML(path, app_name, app_name_space, app_view, app_socket);
+		    }
+		    
+		    /**
+	 * Adds app into locally installed app.
+	 * @param app_name_space
+	 * @returns
+	 */
+	function installApp(app_name_space) {
+		
+		console.log(typeof(app_name_space));
+		var app_socket = "";
+		var app_view = "";
+		var app_name = "";
+		
+		
+		$.ajax({
+			type: "GET",
+			url: "http://172.16.224.104:9000/assets/applications/list.xml",
+			dataType: "xml",
+			success: function(xml) {
+				 
+				var num_of_apps = $(xml).find("app").length;
+				$(xml).find('app').each(function(i){
+				
+					var cur_namespace = $(this).find("namespace").text();
+					if(cur_namespace == app_name_space) {
+						app_name = $(this).find("name").text();
+						app_view = $(this).find("view").text();
+						app_socket = $(this).find("websocket_address").text();
+						
+					}
+				});
+				
+				
+						//update my_list.xml file by adding app
+						//udpateMyApps("file:///android_asset/www/apps/my_list.xml", app_name, app_name_space, app_view, app_socket);
+						console.log("success posting");
+						var my_app_div = "<div id='my_"+app_name_space+"' class='my_app_entry'>"+
+											"<div class='my_app_name'>"+app_name+"</div>"+
+											"<div class='my_app_toggle'>"+
+												"<ul>"+
+													"<li class='on'><a href='#'>OFF</a></li>"+
+													"<li><a href='#'>ON</a></li>"+
+												"</ul>"+
+											"</div>"+
+										"</div>";
+											
+						
+						$("#my_apps_content").append(my_app_div);
+						
+						console.log("APP VIEW => "+app_view);
+						
+						//set link to app configuration view
+						$("#my_"+app_name_space+" .my_app_name").click(function() {
+							window.location.replace(app_view); 
+						});
+						
+						
+						//set button to activate or disactivate application socket
+						$("#my_"+app_name_space+" ul li").click(function(){
+							$("#my_"+app_name_space+" ul li").removeClass("on");
+							$(this).addClass("on");
+							
+							var toggle = $(this).find("a").text();
+							if(toggle == "ON") {
+								
+								activateUserPreference(app_name_space);
+								
+							} else if(toggle = "OFF"){
+								
+								deactivateAppSocket(app_socket);
+								console.log(sockets);
+							}
+							
+						});
+						
+						markInstalledApp(app_name_space);
+						
+						//create entry in SQL android DB
+						createEntry("mattia", app_name_space)
+						showMyApps();
+						
+					}
+				
+			
+			});
+			
+			
+		
+	}
 		    
 				
 		</script>
