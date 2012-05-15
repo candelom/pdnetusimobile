@@ -11,19 +11,16 @@
 	 * @returns
 	 */
 	function updateUserPosition(lat, lng, accuracy) {
-		
+		console.log("/*** UPDATE USER POSITION ***/");
 		if(user_pos == null) {
 			user_pos = {};
 		} 
 		user_pos.lat = lat;
 		user_pos.lng = lng;
 		user_pos.accuracy = accuracy;
-			
 	}	
 	
 	
-
-
 	
 	
 	/**
@@ -40,6 +37,26 @@
 		map_div.style.height = height;
 	
 	}
+	
+	
+	
+	
+	/**
+	 * Initializes google map
+	 */
+	function initializeMap() {
+		
+		var myOptions = {
+				zoom: 15,
+				mapTypeId: google.maps.MapTypeId.ROADMAP,
+				mapTypeControlOptions: { style: google.maps.MapTypeControlStyle.DROPDOWN_MENU }
+			};
+        
+        map = new google.maps.Map(document.getElementById("pd_map_content"), myOptions);
+        
+     }
+
+
 	
 	
 	

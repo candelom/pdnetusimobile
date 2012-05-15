@@ -5,7 +5,8 @@
 	 * Initialize feed view
 	 */
 	function initFeedView() {
-		if("feed" in localStorage) {
+		localStorage.clear();
+		if("feeds" in localStorage) {
 			loadStoredSources();
 		} 
 		else {
@@ -16,7 +17,6 @@
 
 	
 	
-	
 	function addTopic(name) {
 		
 		var topic = "<div class='topic_entry' onclick=\"goToSourcesView('"+name+"');\">"+
@@ -24,7 +24,6 @@
 					"</div>";
 		
 		$("#list_topics").append(topic);
-		
 	}
 
 	
@@ -50,10 +49,9 @@
 	 */
 	function loadXMLSources() {
 		
-		console.log("loading sources");
 		$.ajax({
 			type: "GET",
-			url: "feed.xml",
+			url: "http://172.16.224.104:9000/assets/applications/feed.xml",
 			dataType: "xml",
 			success: function(xml) {
 				 $(xml).find('topic').each(function(){
@@ -112,16 +110,17 @@
 	 */
 	function checkSource(obj, source) {
 		obj.html("<img src='../../images/checked.png' />");
-		if("feed" in localStorage) {
-			var stored_sources = JSON.parse(localStorage["feed"]);
+		if("feeds" in localStorage) {
+			console.log("setting first source");
+			var stored_sources = JSON.parse(localStorage["feeds"]);
 			stored_sources.push(source);
-			localStorage['feed'] = JSON.stringify(stored_sources);
+			localStorage['feeds'] = JSON.stringify(stored_sources);
 		} else {
-			localStorage['feed'] = JSON.stringify([source]);
+			console.log("setting source")
+			localStorage['feeds'] = JSON.stringify([source]);
 		}
 		
-		console.log("checkSource");
-		console.log("localStorage => "+localStorage['feed']);
+		console.log("localStorage => "+localStorage['feeds']);
 	}
 	
 	
@@ -130,10 +129,10 @@
 		console.log("remove from sources");
 		obj.html("");
 		
-		var stored_sources = JSON.parse(localStorage['feed']);
-		localStorage['feed'] = JSON.stringify(removeFromArray(source, stored_sources));
+		var stored_sources = JSON.parse(localStorage['feeds']);
+		localStorage['feeds'] = JSON.stringify(removeFromArray(source, stored_sources));
 		if(stored_sources.length == 0) {
-			localStorage.removeItem('feed');
+			localStorage.removeItem('feeds');
 		} 
 	}
 	

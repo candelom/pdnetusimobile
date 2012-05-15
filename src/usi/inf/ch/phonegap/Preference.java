@@ -10,9 +10,9 @@ public class Preference {
 	private String prefValue;
 	
 	
+
 	
 	public long getId() {
-		
 		return id;
 	}
 	
@@ -20,7 +20,6 @@ public class Preference {
 	public void setId(long id) {
 		
 		this.id = id;
-		
 	}
 
 	
@@ -50,17 +49,19 @@ public class Preference {
 	}
 	
 	
+	
 	public int isPrefActive() {
 		
 		return isActive;
 	}
 	
 	
+	
 	public void setIsActive(int isActive) {
 		
 		this.isActive = isActive;
-		
 	}
+	
 	
 	
 	public String getPrefValue() {

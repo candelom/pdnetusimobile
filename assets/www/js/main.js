@@ -1,8 +1,5 @@
 
 
-	
-
-
 			
 		/**
 		 * Read applications from XML file on server
@@ -10,17 +7,14 @@
 		 */
 		function loadApps() {
 		
-			localStorage.clear();
-			
 			$.ajax({
 				 type: "GET",
 				 url: "http://172.16.224.104:9000/assets/applications/list.xml",
 				 dataType: "xml",
 				 success: function(xml) {
-				 
+				 	
 				 	 var num_of_apps = $(xml).find("app").length;
 					 $(xml).find('app').each(function(i){
-						 
 						 var app_name = $(this).find("name").text();
 						 var app_desc = $(this).find("description").text();
 						 var app_name_space = $(this).find("namespace").text();
@@ -34,24 +28,72 @@
 						 						"<span class='app_title'>"+app_name+"</span>"+
 						 						"<span>"+app_desc+"</span>"+
 						 					"</div>"+
-											"<div class='app_install'>Install</div>"+						 					
+											"<div class='app_install'></div>"+						 					
 						 				"</div>";
-						 
-						 
+										
 						 $("#all_apps_content").append(app_div);
 						 
-						 //set install function on click
-						 $("#"+app_name_space).click(function() {
-							installApp(app_name_space);
-							$(this).off('click');
+						 var app_info_div = "<div id='"+app_name_space+"_info' class='app_info_entry'>"+
+						 						"<div><a class='back_to_apps' href='#'>Back</a></div>"+
+												"<div class='app_info_title'>"+app_name+"</div>"+
+												"<div class='app_info_'>"+app_desc+"</div>"+
+												"<div class='install_bt'>"+
+												"</div>"+
+						 					"</div>";
+
+						 
+						 $("#app_info").append(app_info_div);
+					
+						 $("#"+app_name_space+"_info .back_to_apps").click(function() {
+						 	
+							showAllApps();
+							
 						 });
 						 
 						 
+						 $("#"+app_name_space).click(function() {
+							showAppInfo(app_name_space);
+						 });
+						 
+						 
+						 
+						 if(DB.isAppInstalled(app_name_space)) {
+														
+							$("#"+app_name_space+" .app_install").text("Installed");
+							
+							var uninstall_bt = "<button class='install_bt_el' type='button'>Uninstall</button>";
+							
+							$("#"+app_name_space+"_info .install_bt").append(uninstall_bt);
+							$("#"+app_name_space+"_info .install_bt").click(function() {
+							    alert("UNINSTALL");
+							 	uninstallApp(app_name_space);
+							 });
+							 
+							
+						 } else {
+						 	$("#"+app_name_space+" .app_install").text("Free");
+							 //set install function on click
+							
+							
+							 var install_bt = "<button class='install_bt_el' type='button'>Install</button>";
+							 $("#"+app_name_space+"_info .install_bt").append(install_bt);
+							 
+							 $("#"+app_name_space+"_info .install_bt").click(function() {
+							 	alert("INSTALL");
+							 	installApp(app_name_space);
+							 });
+							 
+						 }
+						 
 					 });
-					 
+					
+					showAllApps(); 
 				 } 	
 			});
 	}
+
+
+
 
 
 
@@ -64,7 +106,7 @@
 		
 		$.ajax({
 			 type: "GET",
-			 url: "displays/list.xml",
+			 url: "http://172.16.224.104:9000/assets/displays/list.xml",
 			 dataType: "xml",
 			 success: function(xml) {
 				 $(xml).find('display').each(function(i){
@@ -132,14 +174,11 @@
 	 */
 	function showShareView() {
 		console.log("show share apps");
-	
-		
 		$("#share_content").show();
 		setActiveTab("share");
 		$("#all_apps_content").hide();
 		$("#my_apps_content").hide();
 		$("#share_item").hide();
-
 	
 	}
 
@@ -147,19 +186,15 @@
 	 * Show only "My apps" view 	
 	 */
 	function showMyApps() {
-		
-		if($("#my_apps_content").html().length == 0) {
-			loadMyApps();
-		}
-		
 		$("#my_apps_content").show();
 		setActiveTab("my_apps");
 		$("#all_apps_content").hide();
 		$("#share_content").hide();
 		$("#share_item").hide();
-
+		$("#pd_map_content").hide();
+		$("#app_info").hide();
 	}
-
+	
 	
 	/**
 	 * Show only "All apps" view 	
@@ -172,6 +207,8 @@
 		$("#share_content").hide();
 		$("#share_item").hide();
 		$("#pd_map_content").hide();
+		$("#app_info").hide();
+
 		
 	}
 	
@@ -206,22 +243,6 @@
 		
 	}
 	
-	
-	/**
-	 * Initializes google map
-	 */
-	function initializeMap() {
-		
-		var myOptions = {
-				zoom: 15,
-				mapTypeId: google.maps.MapTypeId.ROADMAP,
-				mapTypeControlOptions: { style: google.maps.MapTypeControlStyle.DROPDOWN_MENU }
-			};
-        
-        map = new google.maps.Map(document.getElementById("pd_map_content"), myOptions);
-        
-     }
-
 	
 
 	function insertTiles(apps) {
@@ -267,10 +288,16 @@
 
 
 	
-	function markInstalledApp(app_name_space) {
+	function markAsInstalled(app_name_space) {
 		
 		$("#"+app_name_space+" .app_install").text("Installed");
 		
+	}
+	
+	function markAsFree(app_name_space) {
+		
+		$("#"+app_name_space+" .app_install").text("Free");
+
 	}
 	
 	
@@ -286,7 +313,6 @@
 			 url: "../apps/my_list.xml",
 			 dataType: "xml",
 			 success: function(xml) {
-				 alert("my app loaded");
 				 $(xml).find("app").each(function() {
 					 
 					 
@@ -342,6 +368,28 @@
 		
 		socket.close();
 		return sockets.splice(to_remove, 1);
+		
+	}
+	
+	
+	
+	function setOnOffButton(app_namespace, app_socket) {
+		
+			$("#my_"+app_namespace+" ul li").click(function(){
+				$("#my_"+app_namespace+" ul li").removeClass("on");
+				$(this).addClass("on");
+				
+				var toggle = $(this).find("a").text();
+				if(toggle == "ON") {
+					
+					activateUserPreference(app_namespace);
+					
+				} else if(toggle = "OFF"){
+					
+					deactivateUserPreference(app_namespace);
+				}
+				
+			});
 		
 	}
 	

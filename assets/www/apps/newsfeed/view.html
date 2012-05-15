@@ -20,19 +20,19 @@
 			   		var sendStoredSources = function (){
 			    	
 			        	var jsonToSend = {}
-			        //	var sources = localStorage['feed'];
-			        	
-			        // 	jsonToSend.preference = JSON.parse(sources); 
-						jsonToSend.preference = ["http://feeds.tio.ch/Ticinonline-NewsTicino?format=xml","http://www.cdt.ch/rss/cdt.rss","http://www.engadget.com/rss.xml","http://feeds.bbci.co.uk/news/rss.xml"];
-						
-						jsonToSend.kind = "mobileRequest";
-						jsonToSend.username = "mattia";
-			        	jsonToSend.displayID = "1";
-			        	console.log(jsonToSend);
-			        	
-			        	//sending through web sockets to Feed App Controlletr
-			        	app_socket.send(JSON.stringify(jsonToSend));
-			        	updateEntry("newsfeed", ["http://feeds.tio.ch/Ticinonline-NewsTicino?format=xml","http://www.cdt.ch/rss/cdt.rss","http://www.engadget.com/rss.xml","http://feeds.bbci.co.uk/news/rss.xml"]);
+						if("feeds" in localStorage) {
+				        	var sources = localStorage['feeds'];
+				        	
+				         	jsonToSend.preference = JSON.parse(sources); 
+							jsonToSend.kind = "mobileRequest";
+							jsonToSend.username = "mattia";
+				        	jsonToSend.displayID = "1";
+				        	console.log(jsonToSend);
+				        	
+				        	//sending through web sockets to Feed App Controlletr
+				        	app_socket.send(JSON.stringify(jsonToSend));
+				        	updateEntry("newsfeed", sources);
+						}
 			    	}
 			    	
 			    	
@@ -75,6 +75,7 @@
 				<!--  FEEDS SOURCES LIST VIEW -->
 				<div id="main_page" class="face front">
 					<div id="topic_title" class="titlebar">
+						<a href="../../index.html">Back</a>
 						<h1>News Feeds</h1>
 					</div>
 					<div id="list_topics">

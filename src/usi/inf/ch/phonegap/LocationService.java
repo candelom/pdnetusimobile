@@ -50,9 +50,11 @@ public class LocationService extends Service {
 
 	private Looper mServiceLooper;
 	private ServiceHandler mServiceHandler;
+	public static LocationManager locationManager;
 	public static PreferenceDataSource datasource;
-
-
+	
+	private static String PDNET_HOST = "http://pdnet.inf.unisi.ch";
+	private static String DISPLAYS_URL = "/assets/displays/list.xml";
 	private static HashMap<String, String[]> displays = new HashMap<String, String[]>();
 
 	//stores the active application sockets
@@ -87,17 +89,19 @@ public class LocationService extends Service {
 			readXMLFile("http://172.16.224.104:9000/assets/displays/list.xml");
 
 			// Acquire a reference to the system Location Manager
-			LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+			locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 			// Define a listener that responds to location updates
 			LocationListener locationListener = new LocationListener() {
 				public void onLocationChanged(Location location) {
-
+					String user_lat = Double.toString(location.getLatitude());
+					String user_lng = Double.toString(location.getLongitude());
+					
+					printCoordinates(user_lat, user_lng);
 					// Called when a new location is found by the network location provider.
 					String displayID = checkNearDisplays(location);
 					if(displayID != null) {
-						Log.v("displayID", displayID);
-						Toast.makeText(getApplicationContext(), "displayID = "+displayID, Toast.LENGTH_SHORT).show();
+						printProximityMessage(displayID);
 						triggerPreferences(displayID);
 					}
 				}
@@ -119,8 +123,6 @@ public class LocationService extends Service {
 
 
 				}
-
-
 			};
 
 			// Register the listener with the Location Manager to receive location updates
@@ -159,6 +161,7 @@ public class LocationService extends Service {
 		datasource.open();
 
 		datasource.deleteAll();
+		datasource.deleteAllApps();
 		// start ID so we know which request we're stopping when we finish the job
 		Message msg = mServiceHandler.obtainMessage();
 		msg.arg1 = startId;
@@ -181,13 +184,13 @@ public class LocationService extends Service {
 
 	@Override
 	public void onDestroy() {
-		Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show(); 
 		datasource.close();
+		super.onDestroy();
 	}
 
 
-
-
+	
+	
 	public String getTagValue(String sTag, Element eElement) {
 
 		NodeList nlList = eElement.getElementsByTagName(sTag).item(0).getChildNodes();
@@ -249,13 +252,16 @@ public class LocationService extends Service {
 
 
 
-
+	/**
+	 * Checks if the position of the user is in proximity of a display.
+	 * If so it return the displayID.
+	 * @param user_location
+	 * @return
+	 */
 	public String checkNearDisplays(Location user_location) {
 
-		Log.v("check", "check near displays");
-
+		printProximityCheckMessage();
 		HashMap<String, String[]> pub_displays = getDisplays();
-
 		Set<String> keys = pub_displays.keySet();
 
 		for(String id: keys) {
@@ -295,48 +301,66 @@ public class LocationService extends Service {
 
 
 
+	
+	public void printProximityCheckMessage() {
+		
+		System.out.println("/*** CHECKING NEARBY DISPLAYS ***/");
+		
+	}
 
 
+	/**
+	 * Triggers all active preferences and checks whether 
+	 * the corresponding app has already an active socket. If not it call createAppSocket method.
+	 * Else it calls sendPreferences method
+	 * @param displayID
+	 */
 	public void triggerPreferences(String displayID) {
 
-		Log.v("triggerPreference", "sending preferences");
-		List<Preference> prefs = datasource.getAllPreferences();
-
-		Log.v("loop prefs", "for each pref (size = "+prefs.size()+")");
-		for (int i = 0; i < prefs.size(); i++) {
-
-			Preference curPref = prefs.get(i);
-			//check if the app is active
-			Log.v("appName", prefs.get(i).getAppName());
-			Log.v("isActive value", ""+prefs.get(i).isPrefActive());
-
-			if(prefs.get(i).isPrefActive() == 1) {
-
-				String appName = curPref.getAppName();
-				String prefValue = curPref.getPrefValue();
-				Log.v("prefValue", prefValue);
-
-				Set<String> apps = activeSockets.keySet();
-				Log.v("checking", "is active or not");
-				//if the socket is not already stored create a new one
-				if(!apps.contains(appName)) {
-
-					Log.v("create", "createnew socket");
-					createAppSocket(appName, prefValue, displayID);
-
-				} else {
-					Log.v("send", "just send preference");
-					WebSocketClient appSocket = activeSockets.get(appName);
-					sendPreference(appSocket, prefValue, displayID);
-
+		
+		printTriggerPreferenceMessage(displayID);
+		
+		List<Preference> prefs = datasource.getActivePreferences();
+		if(prefs.size() == 0) {
+			
+			System.out.println("/*** NO APPS ACTIVE ***/");
+			
+		} else {
+			
+			for (int i = 0; i < prefs.size(); i++) {
+	
+				Preference curPref = prefs.get(i);
+				//check if the app is active
+				if(prefs.get(i).isPrefActive() == 1) {
+	
+					String appName = curPref.getAppName();
+					String prefValue = curPref.getPrefValue();
+					Set<String> apps = activeSockets.keySet();
+					//if the socket is not already stored create a new one
+					if(!apps.contains(appName)) {
+						createAppSocket(appName, prefValue, displayID);
+	
+					} else {
+						WebSocketClient appSocket = activeSockets.get(appName);
+						printSendMessage(appName, appSocket.getConnection().getRemoteSocketAddress().getAddress().getHostAddress(), prefValue);
+						sendPreference(appSocket, prefValue, displayID);
+	
+					}
 				}
+	
 			}
-
 		}
 
 	}
 
 
+
+
+	public void printTriggerPreferenceMessage(String displayID) {
+
+		System.out.println("/*** TRIGGER PREFERENCES ***/\n\n");
+			
+	}
 
 
 	public void sendPreference(WebSocketClient socket, String prefValue, String displayID) {
@@ -348,8 +372,6 @@ public class LocationService extends Service {
 			f_values.add(values[j]);
 		}
 		
-		Log.v("values", prefValue);
-		printPreferences(f_values);
 		
 		try {
 				JSONObject msg = new JSONObject(); 
@@ -388,9 +410,12 @@ public class LocationService extends Service {
 	 */
 	public void createAppSocket(final String appName, final String prefValue, final String displayID) {
 
-		try {
+		System.out.println("/*** CREATE SOCKET FOR "+appName+" ***/\n\n");
 
-			WebSocketClient app_socket = new WebSocketClient(new URI("ws://172.16.224.104:9000/"+appName+"/socket")) {
+		
+		try {
+			final String socketAddress = "ws://172.16.224.104:9000/"+appName+"/socket";
+			WebSocketClient app_socket = new WebSocketClient(new URI(socketAddress)) {
 
 				@Override
 				public void onClose(int arg0, String arg1, boolean arg2) {
@@ -414,6 +439,7 @@ public class LocationService extends Service {
 				public void onOpen(ServerHandshake arg0) {
 					// TODO Auto-generated method stub
 					Log.v("connect", "connect");
+					printSendMessage(appName, socketAddress, prefValue);
 					sendPreference(this, prefValue, displayID);
 				}
 			};
@@ -433,6 +459,19 @@ public class LocationService extends Service {
 
 	
 	
+	public static void deactivateSocket(String appName) {
+		
+		System.out.println("/*** DEACTIVATE SOCKET "+appName+" ***/\n\n");
+		if(activeSockets.keySet().contains(appName)) {
+			activeSockets.remove(appName);
+			System.out.println(activeSockets);
+		}
+		
+	}
+	
+	
+	
+	
 	public void printPreferences(ArrayList<String> values) {
 		
 		for(int i = 0 ; i < values.size(); i++) {
@@ -440,7 +479,44 @@ public class LocationService extends Service {
 		}
 		
 	}
+	
+	/**
+	 * Prints information of preference message
+	 * @param appName
+	 * @param appSocket
+	 * @param prefValue
+	 */
+	public void printSendMessage(String appName, String appSocket, String prefValue) {
+		
+		System.out.println("/*** SENDING PREFERENCE ***/\n"+
+							"Name : "+appName+"\n"+
+							"Socket : "+appSocket+"\n"+
+							"Data : "+prefValue+"\n\n");
+		
+	}
 
+	
+	
+	/**
+	 * Prints message when user is in proximity of a display.
+	 */
+	public void printProximityMessage(String displayID) {
+		
+		
+		System.out.println("/*** NEXT TO DISPLAY ***/\n"+
+				"DisplayID : "+displayID+"\n\n");
+		
+	}
+	
+	
+	public void printCoordinates(String lat, String lng) {
+		
+		System.out.println("/*** USER COORDINATES ***/\n"+
+							"Lat : "+lat+"\n"+
+							"Lng : "+lng+"\n"+
+							"\n\n");
+		
+	}
 
 
 }

@@ -3,7 +3,6 @@
 	    */
        function getAlbums(callback) {
          
-          
            albums = [];
            FB.api('/me/albums', function(me){
 

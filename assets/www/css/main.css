@@ -330,5 +330,32 @@ ul li.on a{
 }
 
 
+li.button {
+  margin-top:       10.5px;
+  width:            264px;
+  display:          inline-block;
+  padding:          1px;
+  border-radius:    12px;
+  background-color: #454850;
+  box-shadow:       inset 0 2px 2px rgba(0, 0, 0, 0.5); }
 
+li.button > button {
+  color:            #111111;
+  padding:          6px 0 6px 0;
+  width:            99%;
+  text-align:       center;
+  text-shadow:      0 1px 1px white;
+  border:           0;
+  box-shadow:       0 0 2px rgba(0, 0, 0, 0.5);
+  border-radius:    10px;
+  border-top:       1px solid rgba(255, 255, 255, 0.5);
+  border-bottom:    1px solid rgba(0, 0, 0, 0.75);
+  font-size:        20px;
+  font-weight:      bold;
+  font-family:      "Helvetica Neue", Helvetica, Arial, sans-serif;
 
+  background:       #e2e2e2;
+  background:       -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e2e2e2), color-stop(50%, #dbdbdb), color-stop(51%, #d1d1d1), color-stop(100%, #fefefe));
+  background:       -webkit-linear-gradient(top, #e2e2e2 0%, #dbdbdb 50%, #d1d1d1 51%, #fefefe 100%);
+  background:       linear-gradient(top, #e2e2e2 0%, #dbdbdb 50%, #d1d1d1 51%, #fefefe 100%); 
+ }

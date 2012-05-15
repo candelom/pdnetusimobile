@@ -23,6 +23,16 @@
 
 #weather_form {
 	padding: 20px;	
+   width: 300px;
+   height: 300px;
+   margin: 10px;
+   padding: 0;
+   background: #6fb2e5;
+   box-shadow: 0px 1px 5px #0061aa;
+   box-shadow: inset 0px 10px 20px #b6f9ff;
+   -o-box-shadow: 0px 1px 5px #0061aa, inset 0px 10px 20px #b6f9ff;
+   -webkit-box-shadow: 0px 1px 5px #0061aa, inset 0px 10px 20px #b6f9ff;
+   -moz-box-shadow: 0px 1px 5px #0061aa, inset 0px 10px 20px #b6f9ff;
 }
 
 
@@ -37,9 +47,7 @@
 	float: right;
 	width: 40%;	
 	
-	
 }
-
 
 
 .show_button {
@@ -185,3 +193,52 @@
 .toggle input:checked + span {
 	left: 75%;
 }
+
+
+.button.blue {
+			display: inline-block;
+			border-radius: 12px;
+			-webkit-border-radius: 12px;
+			-moz-border-radius: 12px;
+			/*background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(86,213,255,0.90)), color-stop(0.5, rgba(59,145,255,0.70)), color-stop(0.5, rgba(0,114,255,0.70)), to(rgba(0,133,255,0.80)));*/ 
+			background-color: #006BB6;
+			background-image: -webkit-linear-gradient(#50B7FF,#0080DA 2%,#005692);
+			color: #fff;
+			text-shadow: #000 0 1px 0;
+			font: bold 13px/17px Helvetica, Sans-serif;
+			padding: 9px 11px;
+			float:right;
+			margin-left: 10px;
+}
+
+.button.white {
+		display: inline-block;
+		-webkit-border-radius: 12px;
+		-webkit-box-shadow: 2px 2px 3px #999; 
+		border: solid 3px rgb(110,110,110);
+		border-radius: 12px;
+		background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(234,234,234,0.90)), color-stop(0.5, rgba(195,195,195,0.70)), color-stop(0.5, rgba(166,166,166,0.70)), to(rgba(167,167,167,0.80))); 
+		color: #000;
+		text-shadow: #fff 0 1px 0;
+		font: bold 16px/20px Helvetica, Sans-serif;
+		padding: 9px 50px;
+	}
+	.button.white:hover, .button.white.hover {
+		background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(135,148,203,0.85)), color-stop(0.5, rgba(34,56,159,0.75)), color-stop(0.5, rgba(0,27,145,0.75)), to(rgba(2,59,152,0.65))); 
+		color: #fff;
+		text-shadow: #000 0 1px 0;
+		-webkit-box-shadow: inset rgba(207,207,255,0.75) 0px 1px 1px;
+	}
+		
+.button.blue:hover, .button.white.hover {
+	/*background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(135,148,203,0.85)), color-stop(0.5, rgba(34,56,159,0.75)), color-stop(0.5, rgba(0,27,145,0.75)), to(rgba(2,59,152,0.65)));*/
+	background-color: #0062A7;
+	background-image: -webkit-linear-gradient(#004474,#00538D 10%,#0062A7 65%,#0064A9);
+	
+	
+	color: #fff;
+	text-shadow: #000 0 1px 0;
+	-webkit-box-shadow: inset rgba(207,207,255,0.75) 0px 1px 1px;
+}
+
+
