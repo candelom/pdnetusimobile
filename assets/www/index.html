@@ -2,7 +2,8 @@
 <html>
 <head>
     <title>Tacita Home</title>
-   	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+   	<meta name="viewport" content="width=device-width">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="css/main.css" type="text/css">
     <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript" src="js/map.js"></script>
@@ -16,9 +17,14 @@
 	
 	<script type="text/javascript">
 		
+		 var pdnet_host = "http://pdnet.inf.unisi.ch:9000";
+//		 var pdnet_host = "http://172.16.224.104:9000";
+//		 var pdnet_host = "http://192.168.1.37:9000";
+
 		 //contains web sockets instance for each active app
 		 var sockets = [];
 	    
+		 
 	     //store positions of displays
 	     var pd_markers = [];
       	 
@@ -33,33 +39,30 @@
 	 	 $(function() {
 	
 			//localStorage.clear();
+			console.log("/*** LOADING APPLICATIONS ***/");
 			loadApps();
 			loadInstalledApps();
+			 
 			 
 	 		$("#all_apps").click(function() {
 				showAllApps();
 			});
 	
+			
 			$("#my_apps").click(function() {
 				showMyApps();
 			});
 							 
 							 
 			$("#pd_map").click(function() {
+				getUserPosition();
 				insertMarkers(map);
 				showMap();
 			});		
-			
-			getUserPosition();
+//			
 			setViewport();
-			console.log("initializing map");
 			initializeMap();
 			loadDisplays();
-			
-			
-			$("#slide1-2").click(function() {
-				$("#slide1_images").css("left","-450px");
-			});
 	       
 		});
 		
@@ -96,7 +99,11 @@
 			
 			function removeApp(appNamespace) {
 				DB.removeApp(appNamespace);
-				markAsFree(appNamespace);
+				
+				$("#"+appNamespace+" .install_bt").off('click');
+				$("#"+appNamespace+" .install_bt").click(function() {
+					installApp(appNamespace);
+				});
 			}
 			
 			
@@ -117,12 +124,9 @@
 			function loadInstalledApps() {
 				var apps = DB.getInstalledApps();
 				var app_objs = JSON.parse(apps);
-				console.log("APPS => "+app_objs.length);
 				for(var key in app_objs) {
 					
 					var cur_app = app_objs[key];
-					
-					
 					var my_app_div = "<div id='my_"+cur_app.namespace+"' class='my_app_entry'>"+
 											"<div class='my_app_name'><a href='"+cur_app.view+"'>"+cur_app.name+"</a></div>"+
 											"<div class='my_app_toggle'>"+
@@ -173,7 +177,7 @@
 		
 		$.ajax({
 			type: "GET",
-			url: "http://172.16.224.104:9000/assets/applications/list.xml",
+			url: pdnet_host+"/assets/applications/list.xml",
 			dataType: "xml",
 			success: function(xml) {
 				 
@@ -245,6 +249,7 @@
 		
 		$("#app_info").show();
 		setActiveTab("all_apps");
+		$("#tabs").hide();
 		$("#all_apps_content").hide();
 		$("#share_content").hide();
 		$("#share_item").hide();
@@ -270,7 +275,7 @@
 		
 		$.ajax({
 			type: "GET",
-			url: "http://172.16.224.104:9000/assets/applications/list.xml",
+			url: pdnet_host+"/assets/applications/list.xml",
 			dataType: "xml",
 			success: function(xml) {
 				 
@@ -287,39 +292,30 @@
 					}
 				});
 				
-						//add app to DB
-						removeApp(app_name_space);
-						$("#my_"+app_name_space).remove();
-							
-						showMyApps();
+				//remove app from DB
+				removeApp(app_name_space);
+				$("#my_"+app_name_space).remove();
 					
-					}
+				markAsFree(app_name_space);
+				showMyApps();
+					
+				}
 			});
 		}			
 				
-				
-				
-				
-				
-				
-				
 		</script>
 		<div id="tabs">
-			<div id="all_apps" class="tab active_tab">
-				<div><span>All apps</span></div>
+			<div id="all_apps" class="tab">
+				<img src="images/tabs/all_apps.png" width="90px" height="70px" />
 			</div>
-			<div  id="my_apps" class="tab normal_tab">
-				<div><span>My apps</span></div>
+			<div  id="my_apps" class="tab">
+				<img src="images/tabs/my_apps.png" width="90px" height="70px" />
 			</div>
-			<!-- <div  id="share" class="tab normal_tab">
-				<div><span>Share</span></div>
-			</div> -->
-			<div id="pd_map" class="tab normal_tab">
-				<span>Map</span>
+			<div id="pd_map" class="tab">
+				<img src="images/tabs/pd_map.png" width="90px" height="70px" />
 			</div>
-			
 		 </div>
-		 
+		 <div id="lines"></div>
 	   	 
    	 	<!-- ALL APPS VIEW -->
    	 	<div id="all_apps_content"></div>
@@ -331,17 +327,14 @@
 		 <!--  MY APPS VIEW -->
 		 <div id="my_apps_content"></div>
 	   	 
-	   	 
 	   	 <!-- SHARE -->
 	   	 <div id="share_content"></div>
-	   	 
 	   	 
 	   	 <!--  SHARE ITEM VIEW -->
 	   	 <div id="share_item"></div>
 	   	 
-	   	 
 	   	 <!-- MAP VIEW -->
-	   	 <div id="pd_map_content" ></div>
+	   	 <div id="pd_map_content"></div>
 		
 		
 	</body>

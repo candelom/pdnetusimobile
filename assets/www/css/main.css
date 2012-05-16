@@ -1,14 +1,14 @@
 
 
-/* body {
+ body {
 	
-	backgorund: #fff !important;	
+	background: #fff !important;	
 	margin: 0;	
 	font-family: "Helvetica Neue",HelveticaNeue,"Helvetica-Neue",Helvetica,"BBAlpha Sans",sans-serif;
 	
 }
 
- */
+
 
 /** TITLEBAR **/
 
@@ -49,39 +49,24 @@
 
 /*** MAIN TABS ***/
 
+#lines {
+	height: 1em;
+	background: #1a1a1a;
+	width:100%;
+	margin: 0;
+}
 
 #tabs {
-	
 	width: 100%;	
-	height: 4em;
-	border-bottom: 1px solid #000;	
+	height: 70px;
 }
+
 
 .tab {
-	
-	border-right: 1px solid #000;
-	display: inline-block;	
-	width: 25%;
-	height: 4em;
-	
-	
+	float: left;
+	width:90px;	
+	height:70px;
 }
-
-
-.normal_tab {
-
-	background: #677374;	
-	color: #000;
-
-}
-
-.active_tab {
-	
-	background: #392D3B;
-	color: white;	
-
-}
-
 
 
 
@@ -229,9 +214,7 @@
 
 /** MAP **/
 #pd_map_content {
-	
 	position: absolute;	
-	
 }
 
 
@@ -359,3 +342,80 @@ li.button > button {
   background:       -webkit-linear-gradient(top, #e2e2e2 0%, #dbdbdb 50%, #d1d1d1 51%, #fefefe 100%);
   background:       linear-gradient(top, #e2e2e2 0%, #dbdbdb 50%, #d1d1d1 51%, #fefefe 100%); 
  }
+
+ 
+ 
+ /*** APP_INFO ***/
+
+
+
+
+	.app_info_entry {
+		
+		width:100%;
+		height:100%;
+	}
+
+
+	button.install_bt_el {
+	
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 22px;
+	color: #ffffff;
+	padding: 10px 65px;
+	background: -moz-linear-gradient(
+		top,
+		#2d362d 0%,
+		#8f8f8f);
+	background: -webkit-gradient(
+		linear, left top, left bottom, 
+		from(#2d362d),
+		to(#8f8f8f));
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border: 1px solid #134201;
+	-moz-box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 2px rgba(255,255,255,1);
+	-webkit-box-shadow:
+		0px 1px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 2px rgba(255,255,255,1);
+	text-shadow:
+		0px -1px 0px rgba(000,000,000,0.4),
+		0px 1px 0px rgba(255,255,255,0.3);
+
+
+}
+
+.install_bt {
+	
+	margin: 0 auto;
+}
+
+
+.app_info_desc {
+	
+	margin: 0 auto;
+}
+
+
+
+.app_info_desctitle {
+	
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.app_info_title {
+	
+	font-size: 30px;
+
+}
+
+.app_info_img {
+	
+	width: 100%;
+	height: 200px;
+}
+ 

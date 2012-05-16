@@ -5,6 +5,7 @@ import org.apache.cordova.DroidGap;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -26,14 +27,28 @@ public class PhoneGapActivity extends DroidGap {
         
         // attach websocket factory
         appView.getSettings().setJavaScriptEnabled(true);
+        Log.v("Activity" ,"setJavascript");
         appView.setWebChromeClient(new WebChromeClient());
         appView.addJavascriptInterface(new WebSocketFactory(appView), "WebSocketFactory");
+        Log.v("Activity" ,"WebSocketFactory");
+
+        appView.addJavascriptInterface(new DBInterface(this), "DB");
+        Log.v("Activity" ,"DbInterface");
+
+        
         Intent intent = new Intent(this, LocationService.class);
         startService(intent);
+        Log.v("Activity" ,"Started Service");
         
         
-        appView.addJavascriptInterface(new DBInterface(this), "DB");
         
+        
+	}
+	
+	@Override
+	public void onDestroy() {
+		Log.v("Activity", "closing");
+		super.onDestroy();
 	}
 	
 	

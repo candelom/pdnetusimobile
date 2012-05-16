@@ -161,10 +161,13 @@ public class DBInterface {
    
    public String getInstalledApps() {
 	  
+	   Log.v("LocationService", "db => "+LocationService.datasource.toString());
 	   Toast.makeText(mContext, "loading apps", Toast.LENGTH_SHORT).show();
 	   List<App> apps = LocationService.datasource.getAllApps();
+	   Log.v("DB Interface", "apps number => "+apps.size());
 	   JSONArray json_apps = new JSONArray();
 	   for(int j = 0; j < apps.size(); j++) {
+		   	   Log.v("DB Interface", "cur_app");
 			   App cur_app = apps.get(j);
 			   JSONObject app_obj = new JSONObject();
 			   try {

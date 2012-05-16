@@ -53,7 +53,8 @@
 			};
         
         map = new google.maps.Map(document.getElementById("pd_map_content"), myOptions);
-        
+       	window.onresize = setViewport;
+
      }
 
 
@@ -107,7 +108,6 @@
 			 
 			 marker.setMap(map);
 		}
-		
 		
 	}
 	

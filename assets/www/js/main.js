@@ -9,10 +9,9 @@
 		
 			$.ajax({
 				 type: "GET",
-				 url: "http://172.16.224.104:9000/assets/applications/list.xml",
+				 url: pdnet_host+"/assets/applications/list.xml",
 				 dataType: "xml",
 				 success: function(xml) {
-				 	
 				 	 var num_of_apps = $(xml).find("app").length;
 					 $(xml).find('app').each(function(i){
 						 var app_name = $(this).find("name").text();
@@ -21,33 +20,41 @@
 						 var app_view = $(this).find("view").text();
 						 var app_icon = $(this).find("icon").text();
 						 var app_socket = $(this).find("websocket_address").text();
+
+
+						//var app_image = $(this).find("size")[1].find("preview_image").text();
 						 
 						 var app_div = "<div id='"+app_name_space+"' class='app_entry'>"+
 						 					"<div class='app_icon'><img src='"+app_icon+"' width='40px' height='40px'></div>"+
 						 					"<div class='app_name'>"+
 						 						"<span class='app_title'>"+app_name+"</span>"+
-						 						"<span>"+app_desc+"</span>"+
 						 					"</div>"+
 											"<div class='app_install'></div>"+						 					
 						 				"</div>";
 										
 						 $("#all_apps_content").append(app_div);
-						 
+						 console.log(app_desc);
 						 var app_info_div = "<div id='"+app_name_space+"_info' class='app_info_entry'>"+
-						 						"<div><a class='back_to_apps' href='#'>Back</a></div>"+
-												"<div class='app_info_title'>"+app_name+"</div>"+
-												"<div class='app_info_'>"+app_desc+"</div>"+
-												"<div class='install_bt'>"+
-												"</div>"+
-						 					"</div>";
+													"<div><a class='back_to_apps' href='#'>Back</a></div>"+
+													"<div class='app_info_title'><span>"+app_name+"</span></div>"+
+													"<div class='app_info_'>"+
+														"<div class='app_info_img'>"+
+															"<img src='images/weather.png' width='250px' height='150px' />"+
+														"</div>"+
+														"<div class='app_info_desc'>"+
+															"<span class='app_info_desctitle'>Description</span>"+
+															"<span><p>"+ app_desc+
+															"</p></span>"+
+														"</div>"+
+													"</div>"+					
+													"<div class='install_bt'>"+
+													"</div>"+
+											"</div>";
 
 						 
 						 $("#app_info").append(app_info_div);
-					
 						 $("#"+app_name_space+"_info .back_to_apps").click(function() {
-						 	
 							showAllApps();
-							
 						 });
 						 
 						 
@@ -64,35 +71,27 @@
 							var uninstall_bt = "<button class='install_bt_el' type='button'>Uninstall</button>";
 							
 							$("#"+app_name_space+"_info .install_bt").append(uninstall_bt);
-							$("#"+app_name_space+"_info .install_bt").click(function() {
-							    alert("UNINSTALL");
-							 	uninstallApp(app_name_space);
-							 });
+							setUninstallButton(app_name_space);
 							 
 							
 						 } else {
 						 	$("#"+app_name_space+" .app_install").text("Free");
 							 //set install function on click
-							
-							
 							 var install_bt = "<button class='install_bt_el' type='button'>Install</button>";
 							 $("#"+app_name_space+"_info .install_bt").append(install_bt);
-							 
-							 $("#"+app_name_space+"_info .install_bt").click(function() {
-							 	alert("INSTALL");
-							 	installApp(app_name_space);
-							 });
+								
+							 setInstallButton(app_name_space);
 							 
 						 }
 						 
 					 });
+
+					console.log("loaded app successfully");
 					
 					showAllApps(); 
 				 } 	
 			});
 	}
-
-
 
 
 
@@ -106,7 +105,7 @@
 		
 		$.ajax({
 			 type: "GET",
-			 url: "http://172.16.224.104:9000/assets/displays/list.xml",
+			 url: pdnet_host+"/assets/displays/list.xml",
 			 dataType: "xml",
 			 success: function(xml) {
 				 $(xml).find('display').each(function(i){
@@ -115,7 +114,6 @@
 					 var name = $(this).find("name").text();
 					 var lat = $(this).find("latitude").text();
 					 var lng = $(this).find("longitude").text();
-					  
 					 displays.push([id, name, lat, lng]);
 					 
 				 });
@@ -143,55 +141,48 @@
 	}
 
 		
+		
+	function setInstallButton(app_name_space) {
+		
+		$("#"+app_name_space+"_info .install_bt").off("click");
+		$("#"+app_name_space+"_info .install_bt").click(function() {
+		    alert("INSTALL");
+		 	installApp(app_name_space);
+		 });
+	}
+	
+	
+	function setUninstallButton(app_name_space) {
+		
+		$("#"+app_name_space+"_info .install_bt").off("click");
+		$("#"+app_name_space+"_info .install_bt").click(function() {
+		    alert("UNINSTALL");
+		 	uninstallApp(app_name_space);
+		 });
+	}
+	
 
 
 
 	
 	function setActiveTab(id) {
 		
-		$(".tab").each(function() {
-			if($(this).attr("id") == id) {
-				$(this).addClass("normal_tab");
-				$(this).addClass("active_tab");
-			} else {
-				$(this).removeClass("active_tab");
-				$(this).addClass("normal_tab");
-			}
-			
-		});
+		$("#"+id).html("<img src='images/tabs/"+id+"_sel.png' width='90px' height='70px' />");
 		
 	}
 
 
 
 
-
-
-
-
-	/**
-	 * Show only "Share" view
-	 */
-	function showShareView() {
-		console.log("show share apps");
-		$("#share_content").show();
-		setActiveTab("share");
-		$("#all_apps_content").hide();
-		$("#my_apps_content").hide();
-		$("#share_item").hide();
-	
-	}
-
 	/**
 	 * Show only "My apps" view 	
 	 */
 	function showMyApps() {
+		$("#tabs").show();
 		$("#my_apps_content").show();
 		setActiveTab("my_apps");
-		$("#all_apps_content").hide();
-		$("#share_content").hide();
-		$("#share_item").hide();
-		$("#pd_map_content").hide();
+		unsetAllAppsTab();
+		unsetMapTab();
 		$("#app_info").hide();
 	}
 	
@@ -200,13 +191,12 @@
 	 * Show only "All apps" view 	
 	 */
 	function showAllApps() {
-		
+		$("#tabs").show();
 		$("#all_apps_content").show();
 		setActiveTab("all_apps");
-		$("#my_apps_content").hide();
-		$("#share_content").hide();
-		$("#share_item").hide();
-		$("#pd_map_content").hide();
+
+		unsetMapTab();
+		unsetMyAppsTab();
 		$("#app_info").hide();
 
 		
@@ -214,18 +204,32 @@
 	
 	
 	
-	/**
-	 * Show only "Share item" view
-	 */
-	function showShareItem() {
-		
-		$("#share_item").show();
-		$("#all_apps_content").hide();
+	function unsetMyAppsTab(){
+	
 		$("#my_apps_content").hide();
-		$("#share_content").hide();
-		$("#tabs").hide();
-
+		$("#my_apps").html("<img src='images/tabs/my_apps.png' width='90px' height='70px' />");
+	
 	}
+	
+	
+		
+	function unsetAllAppsTab(){
+	
+		$("#all_apps_content").hide();
+		$("#all_apps").html("<img src='images/tabs/all_apps.png' width='90px' height='70px' />");
+	
+	}
+	
+	
+		
+	function unsetMapTab(){
+	
+		$("#pd_map_content").hide();
+		$("#pd_map").html("<img src='images/tabs/pd_map.png' width='90px' height='70px' />");
+	
+	}
+	
+	
 	
 	
 	/**
@@ -233,14 +237,13 @@
 	 * Show only "Map" view
 	 */
 	function showMap() {
-		
+		$("#tabs").show();
 		$("#pd_map_content").show();
-		$("#all_apps_content").hide();
-		$("#my_apps_content").hide();
-		$("#share_content").hide();
-		//$("#tabs").hide();
-		
-		
+		setActiveTab("pd_map");
+		unsetMyAppsTab();
+		unsetAllAppsTab();
+		$("#app_info").hide();
+
 	}
 	
 	
@@ -291,12 +294,17 @@
 	function markAsInstalled(app_name_space) {
 		
 		$("#"+app_name_space+" .app_install").text("Installed");
-		
+		setUninstallButton(app_name_space);
+			
 	}
+	
+	
 	
 	function markAsFree(app_name_space) {
 		
 		$("#"+app_name_space+" .app_install").text("Free");
+			
+		setInstallButton(app_name_space);
 
 	}
 	

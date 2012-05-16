@@ -1,7 +1,6 @@
 package usi.inf.ch.phonegap;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -10,14 +9,12 @@ import java.nio.channels.NotYetConnectedException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.codehaus.jackson.JsonParser;
 import org.java_websocket.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
@@ -51,19 +48,26 @@ public class LocationService extends Service {
 	private Looper mServiceLooper;
 	private ServiceHandler mServiceHandler;
 	public static LocationManager locationManager;
+	private static LocationListener locationListener;
 	public static PreferenceDataSource datasource;
 	
-	private static String PDNET_HOST = "http://pdnet.inf.unisi.ch";
+	private static String PDNET_HOST = "http://pdnet.inf.unisi.ch:9000";
+//	private static String PDNET_HOST = "http://172.16.224.104:9000";
+//	private static String PDNET_HOST = "http://192.168.1.37:9000";
+
+//	private static String PDNET_SOCKET_HOST = "ws://172.16.224.104:9000";
+//	private static String PDNET_SOCKET_HOST = "ws://192.168.1.37:9000";
+	private static String PDNET_SOCKET_HOST = "ws://pdnet.inf.unisi.ch:9000";
+	
 	private static String DISPLAYS_URL = "/assets/displays/list.xml";
+	private static String APPS_URL = "/assets/applications/list.xml";
 	private static HashMap<String, String[]> displays = new HashMap<String, String[]>();
 
 	//stores the active application sockets
 	private static HashMap<String, WebSocketClient> activeSockets = new HashMap<String, WebSocketClient>();
 
 
-
 	public HashMap<String, WebSocketClient> getSockets() {
-
 		return activeSockets;
 	}
 
@@ -71,7 +75,6 @@ public class LocationService extends Service {
 	public HashMap<String, String[]> getDisplays() {
 		return displays;
 	}
-
 
 
 	// Handler that receives messages from the thread
@@ -86,42 +89,51 @@ public class LocationService extends Service {
 			// Normally we would do some work here, like download a file.
 			// For our sample, we just sleep for 5 seconds.
 			Toast.makeText(getApplicationContext(), "running", Toast.LENGTH_SHORT).show();
-			readXMLFile("http://172.16.224.104:9000/assets/displays/list.xml");
-
+			Log.v("LocationService", "reading "+PDNET_HOST+DISPLAYS_URL);
+			readXMLFile(PDNET_HOST+DISPLAYS_URL);
+			
 			// Acquire a reference to the system Location Manager
 			locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 			// Define a listener that responds to location updates
-			LocationListener locationListener = new LocationListener() {
+			locationListener = new LocationListener() {
 				public void onLocationChanged(Location location) {
-					String user_lat = Double.toString(location.getLatitude());
-					String user_lng = Double.toString(location.getLongitude());
+						if(location != null) {
+							
+							String user_lat = Double.toString(location.getLatitude());
+							String user_lng = Double.toString(location.getLongitude());
+							
+							printCoordinates(user_lat, user_lng);
+							// Called when a new location is found by the network location provider.
+							String displayID = checkNearDisplays(location);
+							if(displayID != null) {
+								printProximityMessage(displayID);
+								triggerPreferences(displayID);
+							} 
+							else {
+								System.out.println("/*** NO DISPLAYS IN PROXIMITY ***/");
+							}
+						}
 					
-					printCoordinates(user_lat, user_lng);
-					// Called when a new location is found by the network location provider.
-					String displayID = checkNearDisplays(location);
-					if(displayID != null) {
-						printProximityMessage(displayID);
-						triggerPreferences(displayID);
-					}
 				}
-
 
 
 				@Override
 				public void onStatusChanged(String provider, int status, Bundle extras) {
 
-
+					System.out.println("/*** ON STATUS CHANGED ***/");
+					
 				}
 
 				public void onProviderEnabled(String provider) {
 
+					System.out.println("/*** ON PROVIDER ENABLED ***/");
 
 				}
 
 				public void onProviderDisabled(String provider) {
 
-
+					System.out.println("/*** PROVIDER DISABLED ***/");
 				}
 			};
 
@@ -140,9 +152,10 @@ public class LocationService extends Service {
 	@Override
 	public void onCreate() {
 		// Start up the thread running the service.  Note that we create a
-		// separate thread because the service normally runs in the process's
+		// separate thread becausef the service normally runs in the process's
 		// main thread, which we don't want to block.  We also make it
 		// background priority so CPU-intensive work will not disrupt our UI.
+		Log.v("LocationService", "create service");
 		HandlerThread thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_BACKGROUND);
 		thread.start();
 
@@ -160,6 +173,7 @@ public class LocationService extends Service {
 		datasource = new PreferenceDataSource(this);
 		datasource.open();
 
+//		Log.v("LocationService", "empty DB");
 		datasource.deleteAll();
 		datasource.deleteAllApps();
 		// start ID so we know which request we're stopping when we finish the job
@@ -167,9 +181,8 @@ public class LocationService extends Service {
 		msg.arg1 = startId;
 		mServiceHandler.sendMessage(msg);
 
-
 		// If we get killed, after returning from here, restart
-		return START_STICKY;
+		return START_NOT_STICKY;
 	}
 
 
@@ -184,15 +197,19 @@ public class LocationService extends Service {
 
 	@Override
 	public void onDestroy() {
-		datasource.close();
+		Log.v("LocationService", "stop service");
 		super.onDestroy();
+		stopReceivingUpdates();
+		datasource.close();
 	}
 
-
 	
+	public void stopReceivingUpdates() {
+		Log.v("LocationService", "STOP receiving updates");
+		locationManager.removeUpdates(locationListener);
+	}
 	
 	public String getTagValue(String sTag, Element eElement) {
-
 		NodeList nlList = eElement.getElementsByTagName(sTag).item(0).getChildNodes();
 		Node nValue = (Node) nlList.item(0);
 		return nValue.getNodeValue();
@@ -200,14 +217,16 @@ public class LocationService extends Service {
 
 
 
-
 	public void readXMLFile(String path) {
 
+		Log.v("LocationService", "reading file");
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db;
 		try {
 			db = dbf.newDocumentBuilder();
+			Log.v("LocationService", "before");
 			Document doc = db.parse(new URL(path).openStream());
+			Log.v("LocationService", "after");
 			Element root = doc.getDocumentElement();
 
 			//get the list of displays
@@ -225,8 +244,6 @@ public class LocationService extends Service {
 					Log.v("lng", lng);
 
 					String[] pd_info = new String[]{lat, lng};
-
-					Log.v("ciao", "id = "+id);
 
 					HashMap<String, String[]> pub_displays = getDisplays();
 					pub_displays.put(id, pd_info);
@@ -249,6 +266,8 @@ public class LocationService extends Service {
 		}
 	}
 
+	
+	
 
 
 
@@ -285,30 +304,24 @@ public class LocationService extends Service {
 			float distance = user_location.distanceTo(pd_location);
 
 			Toast.makeText(this, "dst = "+distance, Toast.LENGTH_SHORT).show(); 
-
-
+			System.out.println("/*** DISTANCE  =  " + distance + "***/");
+			
 			//if the display is in a range of 50 meters
 			if(distance < 1000000050) {
-
 				return id;
 			}
-
 		}
-
 		return null;
-
 	}
+	
 
+
+	public void printProximityCheckMessage() {
+		System.out.println("/*** CHECKING NEARBY DISPLAYS ***/");
+	}
 
 
 	
-	public void printProximityCheckMessage() {
-		
-		System.out.println("/*** CHECKING NEARBY DISPLAYS ***/");
-		
-	}
-
-
 	/**
 	 * Triggers all active preferences and checks whether 
 	 * the corresponding app has already an active socket. If not it call createAppSocket method.
@@ -343,7 +356,7 @@ public class LocationService extends Service {
 					} else {
 						WebSocketClient appSocket = activeSockets.get(appName);
 						printSendMessage(appName, appSocket.getConnection().getRemoteSocketAddress().getAddress().getHostAddress(), prefValue);
-						sendPreference(appSocket, prefValue, displayID);
+						sendPreference(appSocket, prefValue, displayID, appName);
 	
 					}
 				}
@@ -363,7 +376,7 @@ public class LocationService extends Service {
 	}
 
 
-	public void sendPreference(WebSocketClient socket, String prefValue, String displayID) {
+	public void sendPreference(WebSocketClient socket, String prefValue, String displayID, String appName) {
 
 		ArrayList<String> f_values = new ArrayList<String>();
 		String[] values = prefValue.split(", ");
@@ -376,7 +389,7 @@ public class LocationService extends Service {
 		try {
 				JSONObject msg = new JSONObject(); 
 				msg.put("kind", "mobileRequest");
-				if(values.length == 1) {
+				if(appName.equals("weather")) {
 					msg.put("preference", values[0]);
 				} 
 				else {
@@ -414,7 +427,9 @@ public class LocationService extends Service {
 
 		
 		try {
-			final String socketAddress = "ws://172.16.224.104:9000/"+appName+"/socket";
+//			final String socketAddress = "ws://172.16.224.104:9000/"+appName+"/socket";
+
+			final String socketAddress = PDNET_SOCKET_HOST+"/"+appName+"/socket";
 			WebSocketClient app_socket = new WebSocketClient(new URI(socketAddress)) {
 
 				@Override
@@ -440,7 +455,7 @@ public class LocationService extends Service {
 					// TODO Auto-generated method stub
 					Log.v("connect", "connect");
 					printSendMessage(appName, socketAddress, prefValue);
-					sendPreference(this, prefValue, displayID);
+					sendPreference(this, prefValue, displayID, appName);
 				}
 			};
 
@@ -459,6 +474,7 @@ public class LocationService extends Service {
 
 	
 	
+	
 	public static void deactivateSocket(String appName) {
 		
 		System.out.println("/*** DEACTIVATE SOCKET "+appName+" ***/\n\n");
@@ -468,7 +484,6 @@ public class LocationService extends Service {
 		}
 		
 	}
-	
 	
 	
 	

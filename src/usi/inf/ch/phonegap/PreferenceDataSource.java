@@ -29,6 +29,7 @@ public class PreferenceDataSource {
 
 	
 	public void open() throws SQLException {
+		Log.v("DB", "open");
 		database = dbHelper.getWritableDatabase();
 	}
 	
@@ -331,11 +332,11 @@ public class PreferenceDataSource {
 		Cursor cursor = database.query("preferences", prefColumns, "appName = '"+appName+"'", null, null, null, null);
 		cursor.moveToFirst();
 		Preference selPref = cursorToPref(cursor);
-		cursor.close();
 		if(selPref.isPrefActive() == 1){
+			cursor.close();
 			return true;
 		}else  {
-			
+			cursor.close();
 			return false;
 		}
 		
@@ -349,7 +350,7 @@ public class PreferenceDataSource {
 			
 			return true;
 		} 
-		
+		cursor.close();
 		return false;
 	}
 		
