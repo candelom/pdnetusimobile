@@ -15,20 +15,10 @@
         $(function() {
            
         	//create local WebSocket
-//			var app_server = "ws://172.16.224.104:9000/weather/socket";  
-	   	 	var app_server = "ws://pdnet.inf.unisi.ch:9000/weather/socket";
+			var app_server = "ws://172.16.224.104:9000/weather/socket";  
+//	   	 	var app_server = "ws://pdnet.inf.unisi.ch:9000/weather/socket";
 			var app_socket = new WebSocket(app_server);		            
 		            
-					
-			app_socket.onopen = function() {
-				alert("connected");
-				app_socket.send("ciao");
-			}		
-			
-			app_socket.onclose = function() {
-				alert("closed");
-			}
-					
 	        var sendSources = function (){
 	        	
 	        	if(!("preference" in localStorage)) {
@@ -44,7 +34,7 @@
 	        	jsonToSend.kind = "mobileRequest";
 	        	jsonToSend.preference = $("#location").val();
 	        	jsonToSend.username = "mattia";
-	        	jsonToSend.displayID = "3";
+	        	jsonToSend.displayID = "1";
 	        	
 	        	console.log(jsonToSend);
 	        	app_socket.send(JSON.stringify(jsonToSend));

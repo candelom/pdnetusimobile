@@ -14,8 +14,8 @@
 		        $(function() {
 		           
 		        	//create local WebSocket
-//					var app_server = "ws://172.16.224.104:9000/newsfeed/socket";  
-			   		var app_server = "ws://pdnet.inf.unisi.ch:9000/newsfeed/socket";
+					var app_server = "ws://172.16.224.104:9000/newsfeed/socket";  
+//			   		var app_server = "ws://pdnet.inf.unisi.ch:9000/newsfeed/socket";
 				 	var app_socket = new WebSocket(app_server);		            
 		            
 			   		var sendStoredSources = function (){
@@ -27,12 +27,12 @@
 				         	jsonToSend.preference = JSON.parse(sources); 
 							jsonToSend.kind = "mobileRequest";
 							jsonToSend.username = "mattia";
-				        	jsonToSend.displayID = "3";
+				        	jsonToSend.displayID = "1";
 				        	console.log(jsonToSend);
 				        	
 				        	//sending through web sockets to Feed App Controlletr
 				        	app_socket.send(JSON.stringify(jsonToSend));
-				        	updateEntry("newsfeed", JSON.parse(sources));
+				        	updateEntry("newsfeed", sources);
 						}
 			    	}
 			    	
