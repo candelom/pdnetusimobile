@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="usi.inf.ch.phonegap"
+    package="pdnet.usi.ch.tacita"
     android:versionCode="1"
     android:versionName="1.0" >
 	 <uses-sdk android:minSdkVersion="5" />
@@ -31,9 +31,9 @@ android:anyDensity="true"
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
-        <service android:name=".LocationService" />
+        <service android:name="pdnet.usi.ch.tacita.LocationService" />
         <activity
-            android:name=".PhoneGapActivity"
+            android:name=".TacitaActivity"
             android:label="@string/app_name"
             android:configChanges="orientation|keyboardHidden" >
             <intent-filter>

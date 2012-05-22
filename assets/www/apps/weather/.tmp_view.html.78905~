@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tacita Home</title>
+   	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+   	<link rel="stylesheet" href="../../css/main.css" type="text/css">
+    <link rel="stylesheet" href="../../css/weather.css" type="text/css">
+    <script type="text/javascript" src="../../js/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="../../js/weather.js"></script>
+		<script type="text/javascript" src="../../js/socket.js"></script>
+	
+	<script type="text/javascript" charset="utf-8">
+ 		var socket;
+          
+        $(function() {
+           
+        	//create local WebSocket
+			var app_server = "ws://172.16.224.104:9000/weather/socket";  
+//	   	 	var app_server = "ws://pdnet.inf.unisi.ch:9000/weather/socket";
+			var app_socket = new WebSocket(app_server);		            
+		            
+					
+			app_socket.onopen = function() {
+				alert("connected");
+			}		
+			
+			app_socket.onclose = function() {
+				alert("closed");
+			}
+					
+	        var sendSources = function (){
+	        	
+	        	if(!("preference" in localStorage)) {
+	        		localStorage["preference"] = JSON.stringify({});
+				}	        	
+				
+	        	var user_pref = JSON.parse(localStorage['preference']);
+	        	user_pref.weather = $("#location").val();
+	        	localStorage['preference'] = JSON.stringify(user_pref);
+	        	
+	        	
+	        	var jsonToSend = {}
+	        	jsonToSend.kind = "mobileRequest";
+	        	jsonToSend.preference = $("#location").val();
+	        	jsonToSend.username = "mattia";
+	        	jsonToSend.displayID = "3";
+	        	
+	        	console.log(jsonToSend);
+	        	app_socket.send(JSON.stringify(jsonToSend));
+	        	updateEntry("weather", [$("#location").val()]);
+	        }
+                 
+            $("#sendLocation").click(function() {
+            	sendSources();
+            });
+            
+                      
+        })
+        
+        function updateEntry(appName, prefValue) {
+		
+					DB.updatePreferenceEntry(appName, prefValue);
+				}
+       
+    </script>
+</head>
+	
+<body>	
+	
+	<div class="titlebar">
+		<div class='titlebar_left'><a href="../../index.html"><img src='images/back.png' /></a></div>
+		<div class='titlebar_title'><h1>Weather</h1></div>
+		<div class='titlebar_right'></div>
+	</div>
+	<div id="weather_form">
+			<div class="row">
+		   		<div><input type="text" id="location" class="input_text" placeholder="City, Nation"></div>
+		   	</div>
+		   <input type="button" id="sendLocation" name="show" class="show_button" value="Show near display"/>
+		</form>
+	</div>
+	
+</body>
+
+
+
+
+
+

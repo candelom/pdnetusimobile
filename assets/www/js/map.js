@@ -53,12 +53,10 @@
 			};
         
         map = new google.maps.Map(document.getElementById("pd_map_content"), myOptions);
-       	window.onresize = setViewport;
-
+//       	window.onresize = setViewport;
      }
 
 
-	
 	
 	
 	
@@ -67,50 +65,119 @@
 	 */
 	function insertMarkers(map) {
 		
-		 //insert user marker
-		 var pos = new google.maps.LatLng(user_pos.lat, user_pos.lng);
+		 if (user_marker == null) {
 		 
-		 var user_marker = new google.maps.Marker({
-		      position: pos,
-		      title: name,
-		  });
 		 
-		 //Add a Circle overlay to the map.
-	   	 var circle = new google.maps.Circle({
-	     		radius: user_pos.accuracy, // 3000 km
-	     		fillColor: "#FF4D4D",
-	     });
-
-		  
-		  user_marker.setMap(map);
-		  map.setCenter(user_marker.getPosition());
-		  
-		  user_pos.circle = circle;
-		  user_pos.circle.setMap(map);
-		  
-		  user_pos.circle.bindTo('center', user_marker, 'position');
-		
-		
-		//insert displays markers
-		for(var j =0 ; j < displays.length; j++) {
+		 
+		 	//insert user marker
+				var pos = new google.maps.LatLng(user_pos.lat, user_pos.lng);
+				
+				var marker = new google.maps.Marker({
+					position: pos,
+					title: name,
+				});
+				
+				//Add a Circle overlay to the map.
+				var circle = new google.maps.Circle({
+					radius: 37, // 3000 km
+					fillColor: "#FF4D4D",
+				});
+				
+				marker.setMap(map);
+				user_marker = marker;
+				map.setCenter(marker.getPosition());
+				
+				user_pos.circle = circle;
+				user_pos.circle.setMap(map);
+				
+				user_pos.circle.bindTo('center', marker, 'position');
 			
-			 var name = displays[j][1];
-			 var lat = displays[j][2];
-			 var lng = displays[j][3];
-			 
-			 var pos =  new google.maps.LatLng(lat, lng);
-			 
-			 var marker = new google.maps.Marker({
-			      position: pos,
-			      icon: 'images/display-icon.png',
-			      title: name,
-			 });
-			 
-			 marker.setMap(map);
-		}
+			//insert displays markers
+			for(var j =0 ; j < displays.length; j++) {
+				
+				 var name = displays[j][1];
+				 var lat = displays[j][2];
+				 var lng = displays[j][3];
+				 console.log("lat => "+lat);
+				 var pos =  new google.maps.LatLng(lat, lng);
+
+
+
+				var contentString = '<div id="supported_content">'+
+										'<div class="displayName">Display 1</div>'+
+										'<div class="supported_apps">'+
+											'<div class="supported_icon"><img src="images/weather-icon.png" width="30px" height="30px"/></div>'+
+											'<div class="supported_name">Weather</div>'+
+										'</div>'+
+										'<div class="supported_apps">'+
+											'<div class="supported_icon"><img src="images/feed-icon.png" width="30px" height="30px"/></div>'+
+											'<div class="supported_name">Newsfeed</div>'+
+										'</div>'+
+									'</div>';
+									
+									
+				var infowindow = new google.maps.InfoWindow({
+				    content: contentString,
+					maxWidth: 200
+				});
+
+				 
+				 var cur_marker = new google.maps.Marker({
+				      position: pos,
+				      icon: 'images/display-icon.png',
+				      title: name,
+				 });
+				 
+				 cur_marker.setMap(map);
+				 google.maps.event.addListener(cur_marker, 'click', function() {
+				  	infowindow.open(map, cur_marker);
+				 });
+			}
+		
+			}
 		
 	}
 	
+	
+	function insertDisplayMarkers(displays, map) {
+			
+			//insert displays markers
+			for(var j =0 ; j < displays.length; j++) {
+				
+				 var name = displays[j][1];
+				 var lat = displays[j][2];
+				 var lng = displays[j][3];
+				 
+				 var pos =  new google.maps.LatLng(lat, lng);
+
+
+
+				var contentString = '<div id="supported_content">'+
+										'<div class="displayName">Display 1</div>'+
+										'<div class="supported_apps">'+
+											'<div class="supported_icon"><img src="../images" width="30px" height="30px"/></div>'+
+											'<div class="supported_name">Weather</div>'+
+										'</div>'+
+									'</div>';
+									
+				var infowindow = new google.maps.InfoWindow({
+				    content: contentString
+				});
+
+				 
+				 var cur_marker = new google.maps.Marker({
+				      position: pos,
+				      icon: 'images/display-icon.png',
+				      title: name,
+				 });
+				 
+//				 cur_marker.setMap(map);
+				 google.maps.event.addListener(cur_marker, 'click', function() {
+				  	infowindow.open(map, cur_marker);
+				 });
+			}
+		
+	}
 	
 	
 	

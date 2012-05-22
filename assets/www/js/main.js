@@ -20,9 +20,9 @@
 						 var app_view = $(this).find("view").text();
 						 var app_icon = $(this).find("icon").text();
 						 var app_socket = $(this).find("websocket_address").text();
+						 var app_image = $(this).find("preview-image").text();
 
-
-						//var app_image = $(this).find("size")[1].find("preview_image").text();
+//						 var app_image = $(this).find("size")[1].find("preview_image").text();
 						 
 						 var app_div = "<div id='"+app_name_space+"' class='app_entry'>"+
 						 					"<div class='app_icon'><img src='"+app_icon+"' width='40px' height='40px'></div>"+
@@ -33,13 +33,15 @@
 						 				"</div>";
 										
 						 $("#all_apps_content").append(app_div);
-						 console.log(app_desc);
 						 var app_info_div = "<div id='"+app_name_space+"_info' class='app_info_entry'>"+
-													"<div><a class='back_to_apps' href='#'>Back</a></div>"+
-													"<div class='app_info_title'><span>"+app_name+"</span></div>"+
-													"<div class='app_info_'>"+
+													"<div class='titlebar_header'>"+
+														"<div class='titlebar_left'><a class='back_to_apps' href='#'><img src='images/back-icon-2.png' /></a></div>"+
+														"<div class='titlebar_title'><span>"+app_name+"</span></div>"+
+														"<div class='titlebar_right'></div>"+
+													"</div>"+
+													"<div class='app_info_content'>"+
 														"<div class='app_info_img'>"+
-															"<img src='images/weather.png' width='250px' height='150px' />"+
+															"<img src='"+app_image+"' width='200px' height='200px' />"+
 														"</div>"+
 														"<div class='app_info_desc'>"+
 															"<span class='app_info_desctitle'>Description</span>"+
@@ -51,7 +53,6 @@
 													"</div>"+
 											"</div>";
 
-						 
 						 $("#app_info").append(app_info_div);
 						 $("#"+app_name_space+"_info .back_to_apps").click(function() {
 							showAllApps();
@@ -64,22 +65,18 @@
 						 
 						 
 						 
-						 if(DB.isAppInstalled(app_name_space)) {
+						 if(JSInterface.isAppInstalled(app_name_space)) {
 														
 							$("#"+app_name_space+" .app_install").text("Installed");
-							
 							var uninstall_bt = "<button class='install_bt_el' type='button'>Uninstall</button>";
-							
 							$("#"+app_name_space+"_info .install_bt").append(uninstall_bt);
 							setUninstallButton(app_name_space);
-							 
 							
 						 } else {
 						 	$("#"+app_name_space+" .app_install").text("Free");
 							 //set install function on click
 							 var install_bt = "<button class='install_bt_el' type='button'>Install</button>";
 							 $("#"+app_name_space+"_info .install_bt").append(install_bt);
-								
 							 setInstallButton(app_name_space);
 							 
 						 }
@@ -146,28 +143,26 @@
 		
 		$("#"+app_name_space+"_info .install_bt").off("click");
 		$("#"+app_name_space+"_info .install_bt").click(function() {
-		    alert("INSTALL");
+//		    alert("INSTALL");
 		 	installApp(app_name_space);
 		 });
 	}
 	
 	
 	function setUninstallButton(app_name_space) {
-		
 		$("#"+app_name_space+"_info .install_bt").off("click");
 		$("#"+app_name_space+"_info .install_bt").click(function() {
-		    alert("UNINSTALL");
+//		    alert("UNINSTALL");
 		 	uninstallApp(app_name_space);
 		 });
 	}
 	
 
-
-
 	
 	function setActiveTab(id) {
 		
-		$("#"+id).html("<img src='images/tabs/"+id+"_sel.png' width='90px' height='70px' />");
+		$("#" + id).addClass("active");
+		$("#"+id).html("<img src='images/tabss/"+id+"_sel.png' style='margin-top:10px' />");
 		
 	}
 
@@ -184,6 +179,10 @@
 		unsetAllAppsTab();
 		unsetMapTab();
 		$("#app_info").hide();
+		$("#my_apps").css("margin-top", "0px");
+		$("#all_apps").css("margin-top", "10px");
+		$("#pd_map").css("margin-top", "10px");
+
 	}
 	
 	
@@ -194,10 +193,12 @@
 		$("#tabs").show();
 		$("#all_apps_content").show();
 		setActiveTab("all_apps");
-
 		unsetMapTab();
 		unsetMyAppsTab();
 		$("#app_info").hide();
+		$("#all_apps").css("margin-top", "0px");
+		$("#pd_map").css("margin-top", "10px");
+		$("#my_apps").css("margin-top", "10px");
 
 		
 	}
@@ -207,7 +208,7 @@
 	function unsetMyAppsTab(){
 	
 		$("#my_apps_content").hide();
-		$("#my_apps").html("<img src='images/tabs/my_apps.png' width='90px' height='70px' />");
+		$("#my_apps").html("<img src='images/tabss/my_apps.png' />");
 	
 	}
 	
@@ -216,17 +217,15 @@
 	function unsetAllAppsTab(){
 	
 		$("#all_apps_content").hide();
-		$("#all_apps").html("<img src='images/tabs/all_apps.png' width='90px' height='70px' />");
+		$("#all_apps").html("<img src='images/tabss/all_apps.png' />");
 	
 	}
 	
 	
 		
 	function unsetMapTab(){
-	
 		$("#pd_map_content").hide();
-		$("#pd_map").html("<img src='images/tabs/pd_map.png' width='90px' height='70px' />");
-	
+		$("#pd_map").html("<img src='images/tabss/pd_map.png' />");
 	}
 	
 	
@@ -243,15 +242,19 @@
 		unsetMyAppsTab();
 		unsetAllAppsTab();
 		$("#app_info").hide();
+		$("#pd_map").css("margin-top", "0px");
+		$("#all_apps").css("margin-top", "10px");
+		$("#my_apps").css("margin-top", "10px");
+		//window.onresize = setViewport;
 
 	}
 	
 	
 
+
 	function insertTiles(apps) {
 			
 		for(var i = 0; i < apps.length; i++) {
-			
 			var div_tile = $("<div class='share_div'>"+
 								"<div class='app_name'><span>"+apps[i]+"</span></div>"+
 								"<div class='share_icons'>"+
@@ -260,14 +263,13 @@
 								"</div>"+
 							"</div>");
 			
-			$("#share_content").append(div_tile);
-			div_tile.click(function() {
-				console.log("item");
-				showShareItem();
+				$("#share_content").append(div_tile);
+				div_tile.click(function() {
+					console.log("item");
+					showShareItem();
 				
 			});
 		}
-	
 	}
 
 	
@@ -292,20 +294,15 @@
 
 	
 	function markAsInstalled(app_name_space) {
-		
 		$("#"+app_name_space+" .app_install").text("Installed");
 		setUninstallButton(app_name_space);
-			
 	}
 	
 	
 	
 	function markAsFree(app_name_space) {
-		
 		$("#"+app_name_space+" .app_install").text("Free");
-			
 		setInstallButton(app_name_space);
-
 	}
 	
 	

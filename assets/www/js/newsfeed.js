@@ -65,7 +65,7 @@
 						 var source_icon = $(this).find("icon").text();
 						 
 						 sources += "<div class='source_entry'>"+
-						 				"<div class='source_icon'><img src='"+source_icon+"' width='20px' height='20px' /></div>"+
+						 				"<div class='source_icon'><img src='../../"+source_icon+"' width='20px' height='20px' /></div>"+
 						 				"<div class='source_name'>"+
 						 						"<span>"+source_name+"</span>"+
 						 						"<span class='source_link'>"+source_link+"</span>"+

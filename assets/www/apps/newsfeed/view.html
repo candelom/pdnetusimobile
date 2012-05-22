@@ -14,10 +14,21 @@
 		        $(function() {
 		           
 		        	//create local WebSocket
-//					var app_server = "ws://172.16.224.104:9000/newsfeed/socket";  
-			   		var app_server = "ws://pdnet.inf.unisi.ch:9000/newsfeed/socket";
+					var app_server = "ws://172.16.224.104:9000/newsfeed/socket";  
+//			   		var app_server = "ws://pdnet.inf.unisi.ch:9000/newsfeed/socket";
 				 	var app_socket = new WebSocket(app_server);		            
 		            
+					app_socket.onopen = function() {
+						
+						console.log("/*** NEWSFEED SOCKET OPENED ***/");
+					}
+					
+					app_socket.onclose = function() {
+						
+						console.log("/*** NEWSFEED SOCKET CLOSED ***/");
+					}
+					
+					
 			   		var sendStoredSources = function (){
 			    	
 			        	var jsonToSend = {}
@@ -27,8 +38,14 @@
 				         	jsonToSend.preference = JSON.parse(sources); 
 							jsonToSend.kind = "mobileRequest";
 							jsonToSend.username = "mattia";
-				        	jsonToSend.displayID = "3";
-				        	console.log(jsonToSend);
+				        	jsonToSend.displayID = "5";
+				        	
+							
+							console.log("/*** PUSHING PREFERENCE MANUALLY ***/\n"+
+										"displayID : 5 \n"+
+										"kind : mobileRequest \n" +
+										"username : mattia \n"+ 
+										"\n\n");
 				        	
 				        	//sending through web sockets to Feed App Controlletr
 				        	app_socket.send(JSON.stringify(jsonToSend));
@@ -63,7 +80,7 @@
 		        
 		        function updateEntry(appName, prefValue) {
 		
-					DB.updatePreferenceEntry(appName, prefValue);
+					JSInterface.updatePreferenceEntry(appName, prefValue);
 				}
 		        
 		    </script>
@@ -75,9 +92,10 @@
 				
 				<!--  FEEDS SOURCES LIST VIEW -->
 				<div id="main_page" class="face front">
-					<div id="topic_title" class="titlebar">
-						<a href="../../index.html">Back</a>
-						<h1>News Feeds</h1>
+					<div id="topic_title" class="titlebar_header">
+						<div class='titlebar_left'><a href="../../index.html"><img src='../../images/back-icon-2.png' /></a></div>
+						<div class='titlebar_title'><span>News Feeds</span></div>
+						<div class='titlebar_right'></div>
 					</div>
 					<div id="list_topics">
 					</div>
@@ -94,7 +112,6 @@
 				        </div>
 					</div>
 				</div>
-				
 			</div>
 		</div>
 	</body>

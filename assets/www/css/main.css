@@ -2,7 +2,7 @@
 
  body {
 	
-	background: #fff !important;	
+	background-color: rgba(192,194,180, 0.2) !important;	
 	margin: 0;	
 	font-family: "Helvetica Neue",HelveticaNeue,"Helvetica-Neue",Helvetica,"BBAlpha Sans",sans-serif;
 	
@@ -12,39 +12,19 @@
 
 /** TITLEBAR **/
 
-
-.titlebar {
-	
-	background-color: #0E4B75;
-	background-image: -webkit-linear-gradient(#359EE7, #125F95 2%, #0A3655);
-	border-top-color: #0B3C5E;
-	border-bottom-color: #061F31;
-	font-size: 15px;
-    border-bottom: 1px solid #666;
-    color: #222;
-    display: block;
-    /*font-weight: bold;*/
-    padding: 10px 0;
-    text-align: center;
-    text-decoration: none;
-    height: 3em;
-}
-
-
 .titlebar h1 {
+    color: white;
+    font-size: 25px;
+}
+
+
+.titlebar h2 {    
     margin: 0;
     padding: 0;	
     color: white;
     font-size: 25px;
 }
 
-.titlebar h2 {
-    
-    margin: 0;
-    padding: 0;	
-    color: white;
-    font-size: 25px;
-}
 
 
 /*** MAIN TABS ***/
@@ -56,21 +36,40 @@
 	margin: 0;
 }
 
+
 #tabs {
 	width: 100%;	
 	height: 70px;
+	background: #1a1a1a;
 }
 
 
 .tab {
 	float: left;
-	width:90px;	
-	height:70px;
+}
+
+
+.active {
+	
+	margin-top: 10px;
 }
 
 
 
-/** MY APPS **/
+
+
+
+/*** MY APPS ***/
+
+#no_apps {
+	
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	font-size: 18pt;
+	margin-top: 100px;
+
+}
 
 
 .app_entry {
@@ -86,18 +85,16 @@
 	border-width: 1px 1px 0 1px;
 	border-top-style: solid;
 	border-top-color: #DDD;
-	background: white;
-	height: 3.5em;
-	background-color: rgba(192,194,180, 0.2);
+	/*background: white;*/
+	height: 2.5em;
 	/*background-color: #B0D6E6;*/	
-		
 }
 
 
+.app_title 
+{
 
-.app_title {
-
-	font-size: 20pt;
+	font-size: 15pt;
 	color: #392D3B;
 	
 }
@@ -114,7 +111,7 @@
 	
 	float: left;
 	width: 60%;	
-	height:3.5em;
+	height: 2.5em;
 	
 }
 
@@ -129,7 +126,7 @@
 	float:left;
 	width: 20%;	
 	height: 3.5em;
-	margin-top: 40px;
+	margin-top: 20px;
 }
 
 
@@ -219,6 +216,39 @@
 
 
 
+
+#supported_content {
+	
+	width: 250px;
+	
+}
+
+
+.displayName {
+	
+	font-weight: bold;
+}
+
+.supported_apps {
+	width: 100%;
+	magrin-top: 5px;
+}
+
+.supported_icon {
+	
+	float: left;
+	width: 20%;
+}
+
+
+.supported_name {
+	
+	float:left;
+	width: 20%;
+	
+}
+
+
 /** MY APPS **/
 
 
@@ -236,8 +266,8 @@
 	border-top-style: solid;
 	border-top-color: #DDD;
 	background: white;
-	height: 3.5em;
-	background-color: rgba(192,194,180, 0.2);
+	height: 3em;
+	/*background-color: rgba(192,194,180, 0.2);*/
 }
 
 
@@ -348,17 +378,8 @@ li.button > button {
  /*** APP_INFO ***/
 
 
-
-
-	.app_info_entry {
-		
-		width:100%;
-		height:100%;
-	}
-
-
-	button.install_bt_el {
-	
+button.install_bt_el {
+	    			
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 22px;
 	color: #ffffff;
@@ -389,14 +410,15 @@ li.button > button {
 }
 
 .install_bt {
+
+	text-align: center;
 	
-	margin: 0 auto;
 }
 
 
 .app_info_desc {
-	
 	margin: 0 auto;
+	width:100%;
 }
 
 
@@ -405,17 +427,60 @@ li.button > button {
 	
 	font-size: 20px;
 	font-weight: bold;
+
 }
 
-.app_info_title {
+
+.titlebar_title {
 	
-	font-size: 30px;
+	margin-top: 10px;
+	font-size: 22px;
+	color: white;
+	float: left;
+	text-align: center;
+	width: 60%;
+	
+}
+
+.titlebar_left {
+	
+	margin-top: 10px;
+	float: left;
+	width: 20%;
+}
+
+.titlebar_right {
+	
+	margin-top: 10px;
+	float: left;
+	width: 20%;
 
 }
+
 
 .app_info_img {
 	
 	width: 100%;
 	height: 200px;
+}
+
+.titlebar_header {
+	width: 100%;
+	height: 55px;	
+	background: -moz-linear-gradient(top, #4c4c4c 0%, #595959 10%, #666666 19%, #474747 28%, #2c2c2c 43%, #000000 58%, #111111 66%, #000000 71%, #2b2b2b 86%, #1c1c1c 98%, #131313 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4c4c4c), color-stop(10%,#595959), color-stop(19%,#666666), color-stop(28%,#474747), color-stop(43%,#2c2c2c), color-stop(58%,#000000), color-stop(66%,#111111), color-stop(71%,#000000), color-stop(86%,#2b2b2b), color-stop(98%,#1c1c1c), color-stop(100%,#131313)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #4c4c4c 0%,#595959 10%,#666666 19%,#474747 28%,#2c2c2c 43%,#000000 58%,#111111 66%,#000000 71%,#2b2b2b 86%,#1c1c1c 98%,#131313 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #4c4c4c 0%,#595959 10%,#666666 19%,#474747 28%,#2c2c2c 43%,#000000 58%,#111111 66%,#000000 71%,#2b2b2b 86%,#1c1c1c 98%,#131313 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #4c4c4c 0%,#595959 10%,#666666 19%,#474747 28%,#2c2c2c 43%,#000000 58%,#111111 66%,#000000 71%,#2b2b2b 86%,#1c1c1c 98%,#131313 100%); /* IE10+ */
+	background: linear-gradient(top, #4c4c4c 0%,#595959 10%,#666666 19%,#474747 28%,#2c2c2c 43%,#000000 58%,#111111 66%,#000000 71%,#2b2b2b 86%,#1c1c1c 98%,#131313 100%); /* W3C */
+}
+
+
+.app_info_content {
+	
+	width: 100%;
+	margin-top: 10px;
+	text-align: center;
+	
 }
  

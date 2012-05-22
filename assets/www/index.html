@@ -17,17 +17,18 @@
 	
 	<script type="text/javascript">
 		
-		 var pdnet_host = "http://pdnet.inf.unisi.ch:9000";
-//		 var pdnet_host = "http://172.16.224.104:9000";
+//		 var pdnet_host = "http://pdnet.inf.unisi.ch:9000";
+		 var pdnet_host = "http://172.16.224.104:9000";
 //		 var pdnet_host = "http://192.168.1.37:9000";
 
 		 //contains web sockets instance for each active app
 		 var sockets = [];
-	    
 		 
 	     //store positions of displays
 	     var pd_markers = [];
-      	 
+      
+	  	 var map = null;
+	  	 
       	 //store position of the user
          var user_marker = null;
       	 var user_pos = null;
@@ -43,7 +44,6 @@
 			loadApps();
 			loadInstalledApps();
 			 
-			 
 	 		$("#all_apps").click(function() {
 				showAllApps();
 			});
@@ -56,14 +56,15 @@
 							 
 			$("#pd_map").click(function() {
 				getUserPosition();
-				insertMarkers(map);
+				if(map == null) {
+					initializeMap();
+					insertMarkers(map);
+				}
 				showMap();
 			});		
-//			
+			
 			setViewport();
-			initializeMap();
 			loadDisplays();
-	       
 		});
 		
 	</script>
@@ -74,32 +75,27 @@
 
 			function deactivateUserPreference(appName) {
 				
-				DB.deactivateUserPreferenceEntry(appName);
-				
+				JSInterface.deactivateUserPreferenceEntry(appName);
 			}
 
 
 			function activateUserPreference(appName) {
-				
-				var string = DB.activateUserPreferenceEntry(appName);
+				var string = JSInterface.activateUserPreferenceEntry(appName);
 			}
 			
 	
 		    function createEntry(appName, prefValue) {
-		
-				DB.createPreferenceEntry(appName, prefValue);
+				JSInterface.createPreferenceEntry(appName, prefValue);
 			}
 		    
 		    
 		    function udpateMyApps(app_name, app_name_space, app_view, app_socket, app_description, app_icon) {
-		    
-		    	DB.addApp(app_name, app_name_space, app_view, app_socket, app_description, app_icon);
+		    	JSInterface.installApp(app_name, app_name_space, app_view, app_socket, app_description, app_icon);
 		    }
 			
 			
 			function removeApp(appNamespace) {
-				DB.removeApp(appNamespace);
-				
+				JSInterface.uninstallApp(appNamespace);
 				$("#"+appNamespace+" .install_bt").off('click');
 				$("#"+appNamespace+" .install_bt").click(function() {
 					installApp(appNamespace);
@@ -107,58 +103,74 @@
 			}
 			
 			
-			
 			function getUserPosition() {
-				 
-				var json_location = DB.getCurrentLocation();
+				var json_location = JSInterface.getCurrentLocation();
+				
 				var location_obj = JSON.parse(json_location);
 				var lat = location_obj.lat
 				var lng = location_obj.lng;
+				console.log("LOCATION => "+lat+" : "+lng);
 				var accuracy = location_obj.accuracy;
-				updateUserPosition(lat, lng);
-				
+				updateUserPosition(lat, lng, accuracy);
 			}
 			
 			
 			
 			function loadInstalledApps() {
-				var apps = DB.getInstalledApps();
+				var apps = JSInterface.getInstalledApps();
 				var app_objs = JSON.parse(apps);
-				for(var key in app_objs) {
+				
+				if (app_objs.length == 0) {
 					
-					var cur_app = app_objs[key];
-					var my_app_div = "<div id='my_"+cur_app.namespace+"' class='my_app_entry'>"+
-											"<div class='my_app_name'><a href='"+cur_app.view+"'>"+cur_app.name+"</a></div>"+
-											"<div class='my_app_toggle'>"+
-											"</div>"+
-										"</div>";
-										
+					var my_app_div = "<div id='no_apps'>"+
+									 	"<span>No apps installed</span>"+
+									 "</div>";
+					
+					
+					
 					$(my_app_div).appendTo($("#my_apps_content"));
 					
-					//set link to app configuration view
-					
-					//check if app preference is active
-					var isActive = DB.isAppActive(cur_app.namespace);
-					if(isActive) {
-						var button = "<ul>"+
-										"<li><a href='#'>OFF</a></li>"+
-										"<li class='on'><a href='#'>ON</a></li>"+
-									 "</ul>";
-									 
-						$("#my_"+cur_app.namespace+" .my_app_toggle").append(button);
-					} else {
-						var button = "<ul>"+
-										"<li class='on'><a href='#'>OFF</a></li>"+
-										"<li><a href='#'>ON</a></li>"+
-									 "</ul>";
-									 
-						$("#my_"+cur_app.namespace+" .my_app_toggle").append(button);
-					}
-					
-					setOnOffButton(cur_app.namespace, cur_app.socket);
-					
 				}
+				else {
 				
+				
+					for (var key in app_objs) {
+					
+						var cur_app = app_objs[key];
+						var my_app_div = "<div id='my_" + cur_app.namespace + "' class='my_app_entry'>" +
+											"<div class='my_app_name'><a href='" + cur_app.view +"'>" +
+											cur_app.name +
+											"</a></div>" +
+											"<div class='my_app_toggle'>" +
+											"</div>" +
+										"</div>";
+						
+						$(my_app_div).appendTo($("#my_apps_content"));
+						
+						
+						//check if app preference is active
+						var isActive = JSInterface.isAppActive(cur_app.namespace);
+						if (isActive) {
+							var button = "<ul>" +
+							"<li><a href='#'>OFF</a></li>" +
+							"<li class='on'><a href='#'>ON</a></li>" +
+							"</ul>";
+							
+							$("#my_" + cur_app.namespace + " .my_app_toggle").append(button);
+						}
+						else {
+							var button = "<ul>" +
+							"<li class='on'><a href='#'>OFF</a></li>" +
+							"<li><a href='#'>ON</a></li>" +
+							"</ul>";
+							
+							$("#my_" + cur_app.namespace + " .my_app_toggle").append(button);
+						}
+						
+						setOnOffButton(cur_app.namespace, cur_app.socket);
+						
+					}
+				}
 			}
 		    
    /**
@@ -173,8 +185,9 @@
 		var app_name = "";
 		var app_icon = "";
 		var app_description = "";
-		
-		
+
+		$("#no_apps").hide();		
+
 		$.ajax({
 			type: "GET",
 			url: pdnet_host+"/assets/applications/list.xml",
@@ -226,7 +239,7 @@
 		
 	function showAppInfo(appNamespace) {
 		
-		if(DB.isAppInstalled(appNamespace)) {
+		if(JSInterface.isAppInstalled(appNamespace)) {
 			console.log("IS ALREADY INSTALLED");
 			$("#"+appNamespace+"_info .install_bt_el").text("Uninstall");
 			
@@ -272,6 +285,11 @@
 		var app_icon = "";
 		var app_description = "";
 		
+		if($("#my_apps_content").html().length == 0) {
+			
+			$("#no_apps").show();
+		}
+
 		
 		$.ajax({
 			type: "GET",
@@ -296,6 +314,15 @@
 				removeApp(app_name_space);
 				$("#my_"+app_name_space).remove();
 					
+				if($("#my_apps_content").html().length == 0) {
+					
+					$("#my_apps_content").html("<div id='no_apps'>"+
+									 				"<span>No apps installed</span>"+
+												"</div>");
+					
+				}	
+					
+					
 				markAsFree(app_name_space);
 				showMyApps();
 					
@@ -305,17 +332,16 @@
 				
 		</script>
 		<div id="tabs">
-			<div id="all_apps" class="tab">
-				<img src="images/tabs/all_apps.png" width="90px" height="70px" />
+			<div id="all_apps" class="tab active">
+				<img src="images/tabss/all_apps.png"/>
 			</div>
-			<div  id="my_apps" class="tab">
-				<img src="images/tabs/my_apps.png" width="90px" height="70px" />
+			<div id="my_apps" class="tab">
+				<img src="images/tabss/my_apps.png" />
 			</div>
 			<div id="pd_map" class="tab">
-				<img src="images/tabs/pd_map.png" width="90px" height="70px" />
+				<img src="images/tabss/pd_map.png" />
 			</div>
 		 </div>
-		 <div id="lines"></div>
 	   	 
    	 	<!-- ALL APPS VIEW -->
    	 	<div id="all_apps_content"></div>

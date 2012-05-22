@@ -13,39 +13,37 @@
  		var socket;
           
         $(function() {
-           
         	//create local WebSocket
-//			var app_server = "ws://172.16.224.104:9000/weather/socket";  
-	   	 	var app_server = "ws://pdnet.inf.unisi.ch:9000/weather/socket";
+			var app_server = "ws://172.16.224.104:9000/weather/socket";  
+//	   	 	var app_server = "ws://pdnet.inf.unisi.ch:9000/weather/socket";
 			var app_socket = new WebSocket(app_server);		            
 		            
-					
 			app_socket.onopen = function() {
-				alert("connected");
-				app_socket.send("ciao");
+				console.log("connected");
 			}		
 			
 			app_socket.onclose = function() {
-				alert("closed");
+				console.log("closed");
 			}
+					
 					
 	        var sendSources = function (){
 	        	
 	        	if(!("preference" in localStorage)) {
 	        		localStorage["preference"] = JSON.stringify({});
-				}	        	
-				
+				}
+					        	
 	        	var user_pref = JSON.parse(localStorage['preference']);
 	        	user_pref.weather = $("#location").val();
 	        	localStorage['preference'] = JSON.stringify(user_pref);
-	        	
 	        	
 	        	var jsonToSend = {}
 	        	jsonToSend.kind = "mobileRequest";
 	        	jsonToSend.preference = $("#location").val();
 	        	jsonToSend.username = "mattia";
-	        	jsonToSend.displayID = "3";
+	        	jsonToSend.displayID = "";
 	        	
+				
 	        	console.log(jsonToSend);
 	        	app_socket.send(JSON.stringify(jsonToSend));
 	        	updateEntry("weather", [$("#location").val()]);
@@ -54,23 +52,21 @@
             $("#sendLocation").click(function() {
             	sendSources();
             });
-            
                       
         })
         
         function updateEntry(appName, prefValue) {
-		
-					DB.updatePreferenceEntry(appName, prefValue);
-				}
+			JSInterface.updatePreferenceEntry(appName, prefValue);
+		}
        
     </script>
 </head>
-	
+
 <body>	
-	
-	<div class="titlebar">
-		<a href="../../index.html">Back</a>
-		<h1>Weather</h1>
+	<div class="titlebar_header">
+		<div class='titlebar_left'><a href="../../index.html"><img src='../../images/back-icon-2.png' /></a></div>
+		<div class='titlebar_title'><span>Weather</span></div>
+		<div class='titlebar_right'></div>
 	</div>
 	<div id="weather_form">
 			<div class="row">
@@ -79,11 +75,5 @@
 		   <input type="button" id="sendLocation" name="show" class="show_button" value="Show near display"/>
 		</form>
 	</div>
-	
 </body>
-
-
-
-
-
 

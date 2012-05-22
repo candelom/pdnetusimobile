@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>Newsfeed</title>
+		<link rel="stylesheet" type="text/css" href="../../css/newsfeed.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/main.css" />
+		<script type="text/javascript" charset="utf-8" src="../../js/socket.js" ></script>
+		<script type="text/javascript" charset="utf-8" src="../../js/newsfeed.js" ></script>
+		<script type="text/javascript" src="../../js/jquery-1.7.1.min.js"></script>
+		 
+		<script type="text/javascript" charset="utf-8">
+		var socket;
+		          
+		        $(function() {
+		           
+		        	//create local WebSocket
+//					var app_server = "ws://172.16.224.104:9000/newsfeed/socket";  
+			   		var app_server = "ws://pdnet.inf.unisi.ch:9000/newsfeed/socket";
+				 	var app_socket = new WebSocket(app_server);		            
+		            
+			   		var sendStoredSources = function (){
+			    	
+			        	var jsonToSend = {}
+						if("feeds" in localStorage) {
+				        	var sources = localStorage['feeds'];
+				        	
+				         	jsonToSend.preference = JSON.parse(sources); 
+							jsonToSend.kind = "mobileRequest";
+							jsonToSend.username = "mattia";
+				        	jsonToSend.displayID = "8";
+				        	console.log(jsonToSend);
+				        	
+				        	//sending through web sockets to Feed App Controlletr
+				        	app_socket.send(JSON.stringify(jsonToSend));
+				        	updateEntry("newsfeed", JSON.parse(sources));
+						}
+			    	}
+			    	
+			    	
+		            var receiveEvent = function(event) {
+		            	var data = JSON.parse(event.data)
+		                
+		                // Handle errors
+		                if(data.error) {
+		                    socket.close()
+		                    return
+		                } else {
+		                    $("#onChat").show()
+		                    $("#onError").hide()
+		                }
+		            }
+		            
+		          app_socket.onmessage = receiveEvent
+		          initFeedView();
+		          setSourceEntries();
+		          
+		          $("#send_bt").click(function() {
+		          		sendStoredSources();
+		          });
+		        
+		        });
+		        
+		        
+		        function updateEntry(appName, prefValue) {
+		
+					DB.updatePreferenceEntry(appName, prefValue);
+				}
+		        
+		    </script>
+		</head>
+	
+		<body>
+		<div id="Flip">
+			<div class="pagen">
+				
+				<!--  FEEDS SOURCES LIST VIEW -->
+				<div id="main_page" class="face front">
+					<div id="topic_title" class="titlebar_header">
+						<div class='titlebar_left'><a href="../../index.html"><img src='../../images/back.png' /></a></div>
+						<div class='titlebar_title'><span>News Feeds</span></div>
+						<div class='titlebar_right'></div>
+					</div>
+					<div id="list_topics">
+					</div>
+					<span id="send_bt" class="button white">Send sources</span>
+				</div><!--  END MAIN PAGE -->
+				
+				
+				<!--  SOURCES LIST VIEW -->
+				<div id="sources_list" class="face back">
+					<div id="source_title" class="titlebar">
+						<div id="back_bt" onclick="flipBack();">
+				             <span class="button blue">Done</span>
+				             <h1></h1>
+				        </div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
